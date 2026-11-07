@@ -2,14 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Number Learning 2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Number Learning 3.0</title>
+
     <style>
         body {
             background: #101827;
             color: white;
             text-align: center;
             font-family: Arial;
-            padding: 25px;
+            padding: 20px;
         }
 
         h1 {
@@ -19,11 +21,18 @@
         button {
             background: #00bcd4;
             color: black;
-            padding: 12px 20px;
+            padding: 13px 20px;
             border: none;
             border-radius: 10px;
             margin: 8px;
             font-size: 16px;
+        }
+
+        .card {
+            background: #202d40;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
         }
 
         #result {
@@ -32,62 +41,133 @@
             margin: 20px;
         }
 
-        .history {
-            background: #202d40;
-            padding: 15px;
+        .bar {
+            background: #34445c;
+            height: 15px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin: 5px 0 12px;
+            overflow: hidden;
+        }
+
+        .fill {
+            background: #00e5ff;
+            height: 100%;
+            width: 0%;
+        }
+
+        .row {
+            text-align: left;
+        }
+
+        .small {
+            color: #b8c5d8;
+            font-size: 13px;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Number Learning 2.0</h1>
+    <h1>Number Learning 3.0</h1>
+    <p>Probability Analyzer</p>
 
-    <p>Random Number Generator</p>
+    <div class="card">
+        <h3>Random Number Generator</h3>
 
-    <button onclick="generateNumber()">
-        Generate Number
-    </button>
+        <button onclick="generateNumber()">
+            Generate Number
+        </button>
 
-    <div id="result">?</div>
+        <div id="result">?</div>
+    </div>
 
-    <div class="history">
-        <h2>Number History</h2>
-        <p id="count">Total: 0</p>
+    <div class="card">
+        <h3>Statistics</h3>
+        <h2 id="total">0</h2>
+        <p>Total Attempts</p>
+    </div>
+
+    <div class="card">
+        <h3>Number Frequency (0–9)</h3>
+        <div id="chart"></div>
+    </div>
+
+    <div class="card">
+        <h3>Number History</h3>
         <p id="history">No numbers yet</p>
+
         <button onclick="clearHistory()">
             Clear History
         </button>
     </div>
 
+    <p class="small">
+        Educational tool: random results are independent.
+        Past frequency does not predict future numbers.
+    </p>
+
     <script>
         let numbers = [];
 
         function generateNumber() {
+
             let number = Math.floor(Math.random() * 10);
 
             numbers.unshift(number);
 
             document.getElementById("result").innerText = number;
 
-            document.getElementById("count").innerText =
-                "Total: " + numbers.length;
+            updateStats();
+        }
+
+        function updateStats() {
+
+            let total = numbers.length;
+
+            document.getElementById("total").innerText = total;
 
             document.getElementById("history").innerText =
+                total === 0 ? "No numbers yet" :
                 numbers.join(" - ");
+
+            let chart = "";
+
+            for (let i = 0; i < 10; i++) {
+
+                let count = numbers.filter(n => n === i).length;
+
+                let percent = total === 0 ? 0 :
+                    (count / total) * 100;
+
+                chart += `
+                    <div class="row">
+                        <b>Number ${i}</b>
+                        <span>${count} times (${percent.toFixed(1)}%)</span>
+
+                        <div class="bar">
+                            <div class="fill"
+                                style="width:${percent}%">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById("chart").innerHTML = chart;
         }
 
         function clearHistory() {
+
             numbers = [];
 
             document.getElementById("result").innerText = "?";
-            document.getElementById("count").innerText = "Total: 0";
-            document.getElementById("history").innerText =
-                "No numbers yet";
+
+            updateStats();
         }
+
+        updateStats();
     </script>
 
 </body>
-</html>
+    </html>
+    
