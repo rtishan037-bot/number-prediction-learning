@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Number Learning</title>
+    <title>Number Learning 2.0</title>
     <style>
         body {
             background: #101827;
             color: white;
             text-align: center;
             font-family: Arial;
-            padding: 30px;
+            padding: 25px;
         }
 
         h1 {
@@ -19,25 +19,33 @@
         button {
             background: #00bcd4;
             color: black;
-            padding: 15px 25px;
+            padding: 12px 20px;
             border: none;
             border-radius: 10px;
-            font-size: 18px;
+            margin: 8px;
+            font-size: 16px;
         }
 
         #result {
-            font-size: 40px;
+            font-size: 55px;
             color: #00ff99;
-            margin: 30px;
+            margin: 20px;
+        }
+
+        .history {
+            background: #202d40;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Number Learning</h1>
+    <h1>Number Learning 2.0</h1>
 
-    <p>Learn numbers and probability!</p>
+    <p>Random Number Generator</p>
 
     <button onclick="generateNumber()">
         Generate Number
@@ -45,13 +53,41 @@
 
     <div id="result">?</div>
 
+    <div class="history">
+        <h2>Number History</h2>
+        <p id="count">Total: 0</p>
+        <p id="history">No numbers yet</p>
+        <button onclick="clearHistory()">
+            Clear History
+        </button>
+    </div>
+
     <script>
+        let numbers = [];
+
         function generateNumber() {
             let number = Math.floor(Math.random() * 10);
+
+            numbers.unshift(number);
+
             document.getElementById("result").innerText = number;
+
+            document.getElementById("count").innerText =
+                "Total: " + numbers.length;
+
+            document.getElementById("history").innerText =
+                numbers.join(" - ");
+        }
+
+        function clearHistory() {
+            numbers = [];
+
+            document.getElementById("result").innerText = "?";
+            document.getElementById("count").innerText = "Total: 0";
+            document.getElementById("history").innerText =
+                "No numbers yet";
         }
     </script>
 
 </body>
-  </html>
-  
+</html>
