@@ -2,172 +2,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Number Learning 3.0</title>
-
-    <style>
-        body {
-            background: #101827;
-            color: white;
-            text-align: center;
-            font-family: Arial;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #00e5ff;
-        }
-
-        button {
-            background: #00bcd4;
-            color: black;
-            padding: 13px 20px;
-            border: none;
-            border-radius: 10px;
-            margin: 8px;
-            font-size: 16px;
-        }
-
-        .card {
-            background: #202d40;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 15px 0;
-        }
-
-        #result {
-            font-size: 55px;
-            color: #00ff99;
-            margin: 20px;
-        }
-
-        .bar {
-            background: #34445c;
-            height: 15px;
-            border-radius: 10px;
-            margin: 5px 0 12px;
-            overflow: hidden;
-        }
-
-        .fill {
-            background: #00e5ff;
-            height: 100%;
-            width: 0%;
-        }
-
-        .row {
-            text-align: left;
-        }
-
-        .small {
-            color: #b8c5d8;
-            font-size: 13px;
-        }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Number Analyzer 3.0</title>
+<style>
+body {
+  background:#101827;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+  padding:20px;
+}
+h1 {color:#00e5ff;}
+textarea {
+  width:90%;
+  height:100px;
+  padding:12px;
+  border-radius:10px;
+  font-size:16px;
+}
+button {
+  background:#00bcd4;
+  padding:13px 22px;
+  border:0;
+  border-radius:10px;
+  margin:10px;
+  font-size:16px;
+}
+#result {
+  background:#202f43;
+  padding:20px;
+  border-radius:12px;
+  margin-top:20px;
+  text-align:left;
+  overflow-wrap:anywhere;
+}
+</style>
 </head>
-
 <body>
 
-    <h1>Number Learning 3.0</h1>
-    <p>Probability Analyzer</p>
+<h1>Number Analyzer 3.0</h1>
+<p>Enter your previous numbers</p>
 
-    <div class="card">
-        <h3>Random Number Generator</h3>
+<textarea id="numbers"
+placeholder="Example: 12, 45, 23, 12, 67"></textarea>
 
-        <button onclick="generateNumber()">
-            Generate Number
-        </button>
+<br>
+<button onclick="analyze()">Analyze Numbers</button>
 
-        <div id="result">?</div>
-    </div>
+<div id="result">
+<h3>Analysis Result</h3>
+Your result will appear here.
+</div>
 
-    <div class="card">
-        <h3>Statistics</h3>
-        <h2 id="total">0</h2>
-        <p>Total Attempts</p>
-    </div>
+<script>
+function analyze() {
+ const input = document.getElementById("numbers").value;
 
-    <div class="card">
-        <h3>Number Frequency (0–9)</h3>
-        <div id="chart"></div>
-    </div>
+ const nums = input.split(/[\s,]+/)
+ .filter(x => x.trim() !== "")
+ .map(Number);
 
-    <div class="card">
-        <h3>Number History</h3>
-        <p id="history">No numbers yet</p>
+ if(nums.length < 2 || nums.some(x => !Number.isFinite(x))) {
+   document.getElementById("result").innerHTML =
+   "Please enter at least 2 valid numbers.";
+   return;
+ }
 
-        <button onclick="clearHistory()">
-            Clear History
-        </button>
-    </div>
+ let freq = {};
+ nums.forEach(n => freq[n] = (freq[n] || 0) + 1);
 
-    <p class="small">
-        Educational tool: random results are independent.
-        Past frequency does not predict future numbers.
-    </p>
+ let even = nums.filter(n => n % 2 === 0).length;
+ let odd = nums.length - even;
 
-    <script>
-        let numbers = [];
+ let sorted = [...nums].sort((a,b) => b[1]-a[1]);
 
-        function generateNumber() {
+ let highest = Math.max(...nums);
+ let lowest = Math.min(...nums);
+ let average = nums.reduce((a,b)=>a+b,0)/nums.length;
 
-            let number = Math.floor(Math.random() * 10);
+ let repeated = Object.entries(freq)
+ .filter(([n,c]) => c > 1)
+ .map(([n,c]) => `${n} (${c} times)`);
 
-            numbers.unshift(number);
+ let trend = nums[nums.length-1] > nums[0]
+ ? "Overall upward"
+ : nums[nums.length-1] < nums[0]
+ ? "Overall downward" : "No net change";
 
-            document.getElementById("result").innerText = number;
-
-            updateStats();
-        }
-
-        function updateStats() {
-
-            let total = numbers.length;
-
-            document.getElementById("total").innerText = total;
-
-            document.getElementById("history").innerText =
-                total === 0 ? "No numbers yet" :
-                numbers.join(" - ");
-
-            let chart = "";
-
-            for (let i = 0; i < 10; i++) {
-
-                let count = numbers.filter(n => n === i).length;
-
-                let percent = total === 0 ? 0 :
-                    (count / total) * 100;
-
-                chart += `
-                    <div class="row">
-                        <b>Number ${i}</b>
-                        <span>${count} times (${percent.toFixed(1)}%)</span>
-
-                        <div class="bar">
-                            <div class="fill"
-                                style="width:${percent}%">
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            document.getElementById("chart").innerHTML = chart;
-        }
-
-        function clearHistory() {
-
-            numbers = [];
-
-            document.getElementById("result").innerText = "?";
-
-            updateStats();
-        }
-
-        updateStats();
-    </script>
+ document.getElementById("result").innerHTML = `
+ <h3>Analysis Result</h3>
+ Total Numbers: ${nums.length}<hr>
+ Average: ${average.toFixed(2)}<hr>
+ Highest: ${highest}<hr>
+ Lowest: ${lowest}<hr>
+ Even Numbers: ${even}<hr>
+ Odd Numbers: ${odd}<hr>
+ Trend: ${trend}<hr>
+ Repeated Numbers:
+ ${repeated.length ? repeated.join(", ") : "None"}<hr>
+ Frequency:<br>
+ ${Object.entries(freq).map(([n,c]) =>
+ `${n} = ${c} times`).join("<br>")}
+ <hr>
+ <small>This is statistical analysis, not a guaranteed prediction.</small>
+ `;
+}
+</script>
 
 </body>
-    </html>
-    
+</html>
