@@ -1,113 +1,206 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Number Analyzer 3.0</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number Analyzer V4.0</title>
 <style>
-body {
-  background:#101827;
-  color:white;
-  font-family:Arial;
-  text-align:center;
-  padding:20px;
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080d1c;color:#fff;
+ font-family:Arial,sans-serif;padding:18px;
 }
-h1 {color:#00e5ff;}
-textarea {
-  width:90%;
-  height:100px;
-  padding:12px;
-  border-radius:10px;
-  font-size:16px;
+.container{max-width:650px;margin:auto}
+h1{text-align:center;color:#a78bfa;margin-bottom:5px}
+.sub{text-align:center;color:#94a3b8;font-size:13px}
+.card{
+ background:#121b30;border:1px solid #293858;
+ border-radius:15px;padding:17px;margin:15px 0;
 }
-button {
-  background:#00bcd4;
-  padding:13px 22px;
-  border:0;
-  border-radius:10px;
-  margin:10px;
-  font-size:16px;
+h3{margin-top:0;color:#c4b5fd}
+input{
+ width:100%;padding:14px;border-radius:9px;
+ background:#080d1c;border:1px solid #52648a;
+ color:white;font-size:18px;
 }
-#result {
-  background:#202f43;
-  padding:20px;
-  border-radius:12px;
-  margin-top:20px;
-  text-align:left;
-  overflow-wrap:anywhere;
+button{
+ padding:12px;border:0;border-radius:9px;
+ background:#7957e8;color:white;font-weight:bold;
+ cursor:pointer;
 }
+.mainbtn{width:100%;margin-top:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{
+ padding:17px;border-radius:12px;text-align:center;
+}
+.big{background:#15345b;color:#60a5fa}
+.small{background:#174536;color:#4ade80}
+.stat strong{font-size:26px;display:block}
+.muted{color:#94a3b8;font-size:12px}
+.bar{height:12px;background:#27334b;border-radius:20px;overflow:hidden;display:flex}
+.bigbar{background:#3b82f6}
+.smallbar{background:#22c55e}
+.row{display:flex;justify-content:space-between;margin:13px 0}
+.history{display:flex;flex-wrap:wrap;gap:8px}
+.ball{
+ padding:10px 13px;border-radius:9px;
+ font-weight:bold;background:#26334d;
+}
+.ball.b{color:#60a5fa}
+.ball.s{color:#4ade80}
+.trend{font-size:13px;color:#cbd5e1}
+#freq{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.freqbox{background:#202d46;padding:10px 3px;text-align:center;border-radius:9px}
+.freqbox b{display:block;font-size:20px}
 </style>
 </head>
 <body>
+<div class="container">
 
-<h1>Number Analyzer 3.0</h1>
-<p>Enter your previous numbers</p>
+<h1>NUMBER ANALYZER</h1>
+<p class="sub">VERSION 4.0 • TREND & STATISTICS</p>
 
-<textarea id="numbers"
-placeholder="Example: 12, 45, 23, 12, 67"></textarea>
+<div class="card">
+<h3>Enter Number (0–9)</h3>
+<input id="number" type="number" min="0" max="9" placeholder="Enter number">
+<button class="mainbtn" onclick="addNumber()">ANALYZE NUMBER</button>
+</div>
 
-<br>
-<button onclick="analyze()">Analyze Numbers</button>
+<div class="grid">
+<div class="stat big">
+<span>BIG</span>
+<strong id="bigCount">0</strong>
+<small>Numbers 5–9</small>
+</div>
+<div class="stat small">
+<span>SMALL</span>
+<strong id="smallCount">0</strong>
+<small>Numbers 0–4</small>
+</div>
+</div>
 
-<div id="result">
-<h3>Analysis Result</h3>
-Your result will appear here.
+<div class="card">
+<h3>Big / Small Statistics</h3>
+<div class="row"><span>BIG</span><b id="bigPct">0%</b></div>
+<div class="row"><span>SMALL</span><b id="smallPct">0%</b></div>
+<div class="bar">
+<div class="bigbar" id="bigBar" style="width:0%"></div>
+<div class="smallbar" id="smallBar" style="width:100%"></div>
+</div>
+<p class="muted" id="total">Total entries: 0</p>
+</div>
+
+<div class="card">
+<h3>Latest Trend History</h3>
+<div class="history" id="history">
+<p class="muted">No entries yet.</p>
+</div>
+</div>
+
+<div class="card">
+<h3>Number Frequency (0–9)</h3>
+<div id="freq"></div>
+</div>
+
+<div class="card">
+<h3>Recent Analysis</h3>
+<p class="trend" id="trend">Add numbers to begin analysis.</p>
+</div>
+
+<div class="card">
+<button onclick="clearData()" style="background:#b93850;width:100%">
+CLEAR HISTORY
+</button>
+<p class="muted">This tool displays past data only. It does not predict future outcomes.</p>
+</div>
+
 </div>
 
 <script>
-function analyze() {
- const input = document.getElementById("numbers").value;
+let numbers=[];
 
- const nums = input.split(/[\s,]+/)
- .filter(x => x.trim() !== "")
- .map(Number);
+function addNumber(){
+ const input=document.getElementById("number");
+ const value=input.value;
 
- if(nums.length < 2 || nums.some(x => !Number.isFinite(x))) {
-   document.getElementById("result").innerHTML =
-   "Please enter at least 2 valid numbers.";
-   return;
+ if(value==="" || !Number.isInteger(Number(value)) ||
+ Number(value)<0 || Number(value)>9){
+ alert("Please enter a number from 0 to 9");
+ return;
  }
 
- let freq = {};
- nums.forEach(n => freq[n] = (freq[n] || 0) + 1);
-
- let even = nums.filter(n => n % 2 === 0).length;
- let odd = nums.length - even;
-
- let sorted = [...nums].sort((a,b) => b[1]-a[1]);
-
- let highest = Math.max(...nums);
- let lowest = Math.min(...nums);
- let average = nums.reduce((a,b)=>a+b,0)/nums.length;
-
- let repeated = Object.entries(freq)
- .filter(([n,c]) => c > 1)
- .map(([n,c]) => `${n} (${c} times)`);
-
- let trend = nums[nums.length-1] > nums[0]
- ? "Overall upward"
- : nums[nums.length-1] < nums[0]
- ? "Overall downward" : "No net change";
-
- document.getElementById("result").innerHTML = `
- <h3>Analysis Result</h3>
- Total Numbers: ${nums.length}<hr>
- Average: ${average.toFixed(2)}<hr>
- Highest: ${highest}<hr>
- Lowest: ${lowest}<hr>
- Even Numbers: ${even}<hr>
- Odd Numbers: ${odd}<hr>
- Trend: ${trend}<hr>
- Repeated Numbers:
- ${repeated.length ? repeated.join(", ") : "None"}<hr>
- Frequency:<br>
- ${Object.entries(freq).map(([n,c]) =>
- `${n} = ${c} times`).join("<br>")}
- <hr>
- <small>This is statistical analysis, not a guaranteed prediction.</small>
- `;
+ numbers.unshift(Number(value));
+ input.value="";
+ update();
 }
-</script>
 
+function update(){
+ let big=numbers.filter(n=>n>=5).length;
+ let small=numbers.length-big;
+ let total=numbers.length;
+
+ let bp=total?Math.round(big/total*100):0;
+ let sp=total?100-bp:0;
+
+ document.getElementById("bigCount").textContent=big;
+ document.getElementById("smallCount").textContent=small;
+ document.getElementById("bigPct").textContent=bp+"%";
+ document.getElementById("smallPct").textContent=sp+"%";
+ document.getElementById("bigBar").style.width=bp+"%";
+ document.getElementById("smallBar").style.width=sp+"%";
+ document.getElementById("total").textContent="Total entries: "+total;
+
+ let history=document.getElementById("history");
+ history.innerHTML="";
+
+ if(total===0){
+ history.innerHTML='<p class="muted">No entries yet.</p>';
+ }else{
+ numbers.slice(0,30).forEach(n=>{
+ let el=document.createElement("span");
+ el.className="ball "+(n>=5?"b":"s");
+ el.textContent=n+" "+(n>=5?"BIG":"SMALL");
+ history.appendChild(el);
+ });
+ }
+
+ let freq=document.getElementById("freq");
+ freq.innerHTML="";
+ for(let i=0;i<=9;i++){
+ let count=numbers.filter(n=>n===i).length;
+ let box=document.createElement("div");
+ box.className="freqbox";
+ box.innerHTML="<b>"+i+"</b><small>"+count+" times</small>";
+ freq.appendChild(box);
+ }
+
+ let streak=0;
+ if(total){
+ let first=numbers[0]>=5?"BIG":"SMALL";
+ for(let n of numbers){
+ if((n>=5?"BIG":"SMALL")===first)streak++;
+ else break;
+ }
+ document.getElementById("trend").textContent=
+ "Latest result: "+first+
+ " | Current consecutive run: "+streak+
+ " | Historical BIG: "+bp+"%"+
+ " | Historical SMALL: "+sp+"%";
+ }else{
+ document.getElementById("trend").textContent=
+ "Add numbers to begin analysis.";
+ }
+}
+
+function clearData(){
+ if(confirm("Clear all analysis history?")){
+ numbers=[];
+ update();
+ }
+}
+update();
+</script>
 </body>
-</html>
+  </html>
+  
