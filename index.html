@@ -66,8 +66,6 @@ button{
  background:#202d46;border-radius:10px;
  padding:13px;margin-top:10px
 }
-.good{color:#4ade80}
-.warning{color:#fbbf24}
 </style>
 </head>
 <body>
@@ -82,7 +80,7 @@ button{
 placeholder="Example: 7 2 8 3 5 1 9 4 6 0"></textarea>
 <p class="muted">
 Enter up to 10 numbers together.
-Use spaces, commas or new lines.
+Spaces, commas and continuous digits are supported.
 </p>
 <button class="mainbtn" onclick="addNumbers()">
 ANALYZE NUMBERS
@@ -115,26 +113,40 @@ ANALYZE NUMBERS
 
 <div class="card">
 <h3>Recent vs Overall Analysis</h3>
+
 <div class="row">
-<span>Recent 10 BIG</span><b id="recentBig">0%</b>
+<span>Recent BIG %</span><b id="recentBig">0%</b>
 </div>
 <div class="row">
-<span>Recent 10 SMALL</span><b id="recentSmall">0%</b>
+<span>Recent SMALL %</span><b id="recentSmall">0%</b>
 </div>
+<div class="row">
+<span>Recent EVEN %</span><b id="recentEven">0%</b>
+</div>
+<div class="row">
+<span>Recent ODD %</span><b id="recentOdd">0%</b>
+</div>
+
 <div class="row">
 <span>Overall BIG</span><b id="overallBig">0%</b>
 </div>
 <div class="row">
 <span>Overall SMALL</span><b id="overallSmall">0%</b>
 </div>
-<p class="muted" id="comparison">Enter numbers to compare trends.</p>
+
+<p class="muted" id="comparison">
+Enter numbers to compare trends.
+</p>
 </div>
 
 <div class="card">
 <h3>Latest Trend History</h3>
 <div class="history" id="history">
-<p class="muted">No entries yet.</p>
+<p class="muted">Waiting for next batch of 10 numbers.</p>
 </div>
+<p class="muted" id="historyStatus">
+First batch is hidden until the second batch arrives.
+</p>
 </div>
 
 <div class="card">
@@ -182,7 +194,7 @@ style="background:#b93850;width:100%">
 CLEAR HISTORY
 </button>
 <p class="muted">
-Analysis uses the numbers you enter. History stays in this page session.
+Analysis uses entered historical data.
 Past results cannot guarantee future outcomes.
 </p>
 </div>
@@ -192,7 +204,18 @@ Past results cannot guarantee future outcomes.
 <script>
 let numbers=[];
 
-// Add up to 10 numbers at once
+// Automatically add spaces between continuous digits
+const inputBox=document.getElementById("numbersInput");
+
+inputBox.addEventListener("input",function(){
+ let raw=this.value;
+
+ if(/^[0-9,\s]*$/.test(raw)){
+   const digits=raw.replace(/[\s,]+/g,"");
+   this.value=digits.split("").join(" ");
+ }
+});
+
 function addNumbers(){
  const input=document.getElementById("numbersInput");
  const raw=input.value.trim();
@@ -202,7 +225,12 @@ function addNumbers(){
  return;
  }
 
- // Accept spaces, commas and new lines
+ // Accept spaces, commas, continuous digits and new lines
+ if(!/^[0-9,\s]+$/.test(raw)){
+ alert("Only numbers from 0 to 9 are allowed.");
+ return;
+ }
+
  const parts=raw.split(/[\s,]+/).filter(x=>x!=="");
 
  if(parts.length>10){
@@ -210,15 +238,9 @@ function addNumbers(){
  return;
  }
 
- if(parts.some(x=>!/^[0-9]$/.test(x))){
- alert("Only numbers from 0 to 9 are allowed.");
- return;
- }
-
  const values=parts.map(Number);
 
- // First entered number is treated as the oldest
- // Last entered number is treated as the newest
+ // Newest number remains first in history
  numbers.unshift(...values.reverse());
 
  input.value="";
@@ -247,19 +269,58 @@ function update(){
  document.getElementById("total").textContent=
  "Total entries: "+total;
 
- // History
+ // Recent vs Overall
+ const recent=numbers.slice(0,10);
+
+ const recentBig=recent.filter(n=>n>=5).length;
+ const recentSmall=recent.length-recentBig;
+ const recentEven=recent.filter(n=>n%2===0).length;
+ const recentOdd=recent.length-recentEven;
+
+ const rb=percentage(recentBig,recent.length);
+ const rs=percentage(recentSmall,recent.length);
+ const re=percentage(recentEven,recent.length);
+ const ro=percentage(recentOdd,recent.length);
+
+ document.getElementById("recentBig").textContent=rb+"%";
+ document.getElementById("recentSmall").textContent=rs+"%";
+ document.getElementById("recentEven").textContent=re+"%";
+ document.getElementById("recentOdd").textContent=ro+"%";
+
+ document.getElementById("overallBig").textContent=bp+"%";
+ document.getElementById("overallSmall").textContent=sp+"%";
+
+ let comparison="Not enough data.";
+
+ if(total>=10){
+ if(rb>bp){
+ comparison="Recent BIG frequency is higher than overall BIG frequency.";
+ }else if(rb<bp){
+ comparison="Recent SMALL frequency is higher than overall SMALL frequency.";
+ }else{
+ comparison="Recent and overall BIG/SMALL percentages are equal.";
+ }
+ }
+
+ document.getElementById("comparison").textContent=comparison;
+
+ // Latest Trend History
  const history=document.getElementById("history");
+ const historyStatus=document.getElementById("historyStatus");
  history.innerHTML="";
 
- if(!total){
- history.textContent="No entries yet.";
+ if(total<20){
+ history.innerHTML='<p class="muted">Waiting for next batch of 10 numbers.</p>';
+ historyStatus.textContent=
+ "First 10 numbers are hidden until the second batch arrives.";
  }else{
- numbers.slice(0,30).forEach(n=>{
+ numbers.slice(0,10).forEach(n=>{
  const el=document.createElement("span");
  el.className="ball "+(n>=5?"b":"s");
  el.textContent=n+" "+(n>=5?"BIG":"SMALL");
  history.appendChild(el);
  });
+ historyStatus.textContent="Latest 10 numbers displayed.";
  }
 
  // Frequency chart
@@ -285,36 +346,12 @@ function update(){
  freq.appendChild(box);
  }
 
- // Recent 10 vs overall
- const recent=numbers.slice(0,10);
- const recentBig=recent.filter(n=>n>=5).length;
- const recentSmall=recent.length-recentBig;
-
- const rb=percentage(recentBig,recent.length);
- const rs=percentage(recentSmall,recent.length);
-
- document.getElementById("recentBig").textContent=rb+"%";
- document.getElementById("recentSmall").textContent=rs+"%";
- document.getElementById("overallBig").textContent=bp+"%";
- document.getElementById("overallSmall").textContent=sp+"%";
-
- let comparison="Not enough recent data.";
-
- if(recent.length){
- if(rb>bp){
- comparison="Recent BIG frequency is higher than overall BIG frequency.";
- }else if(rb<bp){
- comparison="Recent SMALL frequency is higher than overall SMALL frequency.";
- }else{
- comparison="Recent and overall BIG/SMALL percentages are equal.";
- }
- }
- document.getElementById("comparison").textContent=comparison;
-
  // Streak detection
  let streak=0;
+
  if(total){
  const first=numbers[0]>=5?"BIG":"SMALL";
+
  for(const n of numbers){
  if((n>=5?"BIG":"SMALL")===first)streak++;
  else break;
@@ -351,13 +388,16 @@ function update(){
  if(alternating){
  messages.push("Alternating BIG/SMALL pattern detected in recent results.");
  }
+
  if(repeated){
  messages.push("Last 3 results belong to the same BIG/SMALL category.");
  }
+
  if(maxCount>1){
  messages.push("Most frequent number(s): "+most.join(", ")+
  " ("+maxCount+" times).");
  }
+
  if(!messages.length){
  messages.push("No strong repeating pattern detected.");
  }
@@ -380,8 +420,10 @@ function update(){
  confidence.textContent=
  "Recent trend strength: "+strength+
  " | Sample size: "+recent.length+
- " | BIG/SMALL difference: "+difference+" percentage points. "+
- (total<10?"More data is needed for a larger sample.":"This measures historical consistency, not predictive accuracy.");
+ " | BIG/SMALL difference: "+difference+
+ " percentage points. "+
+ (total<10?"More data is needed for a larger sample.":
+ "This measures historical consistency, not predictive accuracy.");
  }
 
  // Statistical suggestion
@@ -414,8 +456,8 @@ function update(){
  }else{
  reason.textContent=
  "Historical lean: "+suggested+
- ". Recent 10: BIG "+rb+"%, SMALL "+rs+
- "%. Overall: BIG "+bp+"%, SMALL "+sp+"%.";
+ ". Recent BIG: "+rb+"%, SMALL: "+rs+
+ "%. Overall BIG: "+bp+"%, SMALL: "+sp+"%.";
  }
  }
 
