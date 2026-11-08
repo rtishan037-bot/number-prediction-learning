@@ -5,483 +5,533 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Number Analyzer V4.0</title>
+
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;background:#080d1c;color:#fff;
- font-family:Arial,sans-serif;padding:18px;
+  margin:0;
+  padding:16px;
+  background:#090e1b;
+  color:#eef2ff;
+  font-family:Arial,sans-serif;
 }
-.container{max-width:650px;margin:auto}
-h1{text-align:center;color:#a78bfa;margin-bottom:5px}
-.sub{text-align:center;color:#94a3b8;font-size:13px}
+.app{max-width:650px;margin:auto}
+header{
+  text-align:center;
+  padding:18px 5px;
+}
+header h1{margin:0;color:#64a5ff;font-size:26px}
+header p{color:#8795b1;font-size:13px}
 .card{
- background:#121b30;border:1px solid #293858;
- border-radius:15px;padding:17px;margin:15px 0;
+  background:#141e30;
+  border:1px solid #263650;
+  border-radius:13px;
+  padding:16px;
+  margin-bottom:14px;
 }
-h3{margin-top:0;color:#c4b5fd}
-textarea{
- width:100%;padding:14px;border-radius:9px;
- background:#080d1c;border:1px solid #52648a;
- color:white;font-size:18px;resize:vertical;
- min-height:85px;
+h3{margin:0 0 14px;color:#8bbaff;font-size:16px}
+input{
+  width:100%;
+  padding:14px;
+  border-radius:9px;
+  border:1px solid #344967;
+  background:#0c1525;
+  color:white;
+  font-size:17px;
+  outline:none;
 }
 button{
- padding:12px;border:0;border-radius:9px;
- background:#7957e8;color:white;font-weight:bold;
- cursor:pointer;
+  border:0;
+  border-radius:8px;
+  padding:12px 15px;
+  color:white;
+  background:#2768cf;
+  font-weight:bold;
+  cursor:pointer;
 }
-.mainbtn{width:100%;margin-top:10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{padding:17px;border-radius:12px;text-align:center}
-.big{background:#15345b;color:#60a5fa}
-.small{background:#174536;color:#4ade80}
-.stat strong{font-size:26px;display:block}
-.muted{color:#94a3b8;font-size:12px}
+button:active{opacity:.7}
+.buttons{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.secondary{background:#34435c}
+.danger{background:#a83c4b}
+.success{background:#167d60}
+.note{color:#9aa9c2;font-size:12px;line-height:1.6}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+.stat{
+  background:#0c1525;
+  border-radius:9px;
+  padding:13px;
+  text-align:center;
+}
+.stat strong{display:block;font-size:23px;margin-bottom:5px}
+.stat small{color:#9baac4}
+.big{color:#47d6a0}
+.small{color:#69aaff}
 .bar{
- height:12px;background:#27334b;border-radius:20px;
- overflow:hidden;display:flex
+  height:9px;
+  background:#263650;
+  border-radius:10px;
+  overflow:hidden;
+  margin:10px 0;
 }
-.bigbar{background:#3b82f6}
-.smallbar{background:#22c55e}
-.row{display:flex;justify-content:space-between;margin:13px 0}
-.history{display:flex;flex-wrap:wrap;gap:8px}
-.ball{
- padding:10px 13px;border-radius:9px;
- font-weight:bold;background:#26334d
+.fill{height:100%;background:#31bd91}
+.history{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
 }
-.ball.b{color:#60a5fa}
-.ball.s{color:#4ade80}
-.trend{font-size:13px;color:#cbd5e1;line-height:1.7}
-#freq{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.freqbox{
- background:#202d46;padding:10px 3px;
- text-align:center;border-radius:9px
+.number{
+  background:#263650;
+  border:1px solid #3b5275;
+  padding:10px;
+  border-radius:8px;
+  min-width:42px;
+  text-align:center;
+  cursor:pointer;
 }
-.freqbox b{display:block;font-size:20px}
-.freqbar{
- height:5px;background:#3b82f6;
- margin-top:7px;border-radius:5px
+.number.newest{
+  background:#176e50;
+  border-color:#45d9a1;
 }
-.suggestion{
- background:#202d46;border-radius:10px;
- padding:13px;margin-top:10px
+.number small{display:block;font-size:9px;margin-top:3px}
+.frequency{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:10px 0;
 }
+.frequency span:first-child{width:20px}
+.frequency .bar{flex:1;margin:0}
+.frequency b{width:25px;text-align:right}
+.label{
+  color:#91a5c6;
+  font-size:12px;
+}
+.value{font-weight:bold}
+.warning{
+  border:1px solid #735d2d;
+  background:#302816;
+  color:#f4d28c;
+  border-radius:9px;
+  padding:12px;
+  font-size:12px;
+  line-height:1.6;
+}
+.empty{color:#8191ad;font-size:13px}
+footer{text-align:center;color:#667793;font-size:11px;padding:20px}
 </style>
 </head>
+
 <body>
-<div class="container">
+<div class="app">
 
+<header>
 <h1>NUMBER ANALYZER</h1>
-<p class="sub">VERSION 4.0 • TREND & STATISTICS</p>
+<p>VERSION 4.0 · IMPROVED EDITION</p>
+</header>
 
 <div class="card">
-<h3>Enter Numbers (0–9)</h3>
-<textarea id="numbersInput"
-placeholder="Example: 7 2 8 3 5 1 9 4 6 0"></textarea>
-<p class="muted">
-Enter up to 10 numbers together.
-Spaces, commas and continuous digits are supported.
+<h3>Enter Number</h3>
+<input id="numberInput" placeholder="Enter 0-9 numbers">
+<p class="note">
+Enter latest result first. For multiple entries, first number is NEWEST.
+Example: 5, 4, 8, 2
 </p>
-<button class="mainbtn" onclick="addNumbers()">
-ANALYZE NUMBERS
-</button>
-</div>
-
-<div class="grid">
-<div class="stat big">
-<span>BIG</span>
-<strong id="bigCount">0</strong>
-<small>Numbers 5–9</small>
-</div>
-<div class="stat small">
-<span>SMALL</span>
-<strong id="smallCount">0</strong>
-<small>Numbers 0–4</small>
+<div class="buttons">
+<button onclick="addNumbers()">ADD RESULTS</button>
+<button class="secondary" onclick="undoLast()">UNDO LAST</button>
 </div>
 </div>
 
 <div class="card">
-<h3>Big / Small Statistics</h3>
-<div class="row"><span>BIG</span><b id="bigPct">0%</b></div>
-<div class="row"><span>SMALL</span><b id="smallPct">0%</b></div>
-<div class="bar">
-<div class="bigbar" id="bigBar" style="width:0%"></div>
-<div class="smallbar" id="smallBar" style="width:100%"></div>
+<h3>Overall Statistics</h3>
+<div class="stats">
+<div class="stat">
+<strong class="big" id="bigCount">0</strong>
+<small>BIG (5-9)</small>
 </div>
-<p class="muted" id="total">Total entries: 0</p>
+<div class="stat">
+<strong class="small" id="smallCount">0</strong>
+<small>SMALL (0-4)</small>
 </div>
-
-<div class="card">
-<h3>Recent vs Overall Analysis</h3>
-
-<div class="row">
-<span>Recent BIG %</span><b id="recentBig">0%</b>
+<div class="stat">
+<strong id="totalCount">0</strong>
+<small>Total Entries</small>
 </div>
-<div class="row">
-<span>Recent SMALL %</span><b id="recentSmall">0%</b>
+<div class="stat">
+<strong id="streak">-</strong>
+<small>Latest Streak</small>
 </div>
-<div class="row">
-<span>Recent EVEN %</span><b id="recentEven">0%</b>
 </div>
-<div class="row">
-<span>Recent ODD %</span><b id="recentOdd">0%</b>
-</div>
-
-<div class="row">
-<span>Overall BIG</span><b id="overallBig">0%</b>
-</div>
-<div class="row">
-<span>Overall SMALL</span><b id="overallSmall">0%</b>
-</div>
-
-<p class="muted" id="comparison">
-Enter numbers to compare trends.
-</p>
+<p class="note" id="overallPercent">No data available.</p>
 </div>
 
 <div class="card">
 <h3>Latest Trend History</h3>
-<div class="history" id="history">
-<p class="muted">Waiting for next batch of 10 numbers.</p>
+<p class="note">Newest → Oldest (Left to Right)</p>
+<div class="history" id="history"></div>
+<p class="note" id="historyCount"></p>
 </div>
-<p class="muted" id="historyStatus">
-First batch is hidden until the second batch arrives.
+
+<div class="card">
+<h3>Recent vs Previous Entries</h3>
+<div id="comparison"></div>
+<p class="note">
+Recent = Latest 10 entries.
+Previous = All entries before those 10.
+The two groups never overlap.
 </p>
 </div>
 
 <div class="card">
-<h3>Number Frequency (0–9)</h3>
-<div id="freq"></div>
+<h3>Number Frequency (0-9)</h3>
+<div id="frequency"></div>
 </div>
 
 <div class="card">
-<h3>Pattern Detection</h3>
-<p class="trend" id="pattern">
+<h3>Data Quality</h3>
+<div id="quality" class="note">
 Waiting for data...
-</p>
-</div>
-
-<div class="card">
-<h3>Trend Strength & Confidence</h3>
-<p class="trend" id="confidence">
-Not enough data.
-</p>
-</div>
-
-<div class="card">
-<h3>Prediction Suggestion</h3>
-<div class="suggestion">
-<h2 id="prediction">--</h2>
-<p class="trend" id="predictionReason">
-Enter numbers to analyze historical trends.
-</p>
-<p class="muted">
-This is a statistical suggestion, not a guaranteed next result.
-</p>
 </div>
 </div>
 
-<div class="card">
-<h3>Recent Analysis</h3>
-<p class="trend" id="trend">
-Add numbers to begin analysis.
-</p>
+<div class="warning">
+<strong>Important Statistical Notice</strong><br>
+This application only describes historical data. Random results cannot be reliably predicted from previous results. BIG/SMALL frequency does not guarantee the next outcome. No prediction or winning signal is provided.
 </div>
 
 <div class="card">
-<button onclick="clearData()"
-style="background:#b93850;width:100%">
-CLEAR HISTORY
-</button>
-<p class="muted">
-Analysis uses entered historical data.
-Past results cannot guarantee future outcomes.
-</p>
+<h3>History Management</h3>
+<p class="note">Tap any number in Latest Trend History to correct that entry.</p>
+<div class="buttons">
+<button class="secondary" onclick="editNewest()">EDIT NEWEST</button>
+<button class="danger" onclick="clearHistory()">CLEAR HISTORY</button>
 </div>
+</div>
+
+<footer>
+NUMBER ANALYZER V4.0 · IMPROVED EDITION
+</footer>
 
 </div>
 
 <script>
-let numbers=[];
+let history = [];
 
-// Automatically add spaces between continuous digits
-const inputBox=document.getElementById("numbersInput");
+try {
+  history = JSON.parse(
+    localStorage.getItem("numberAnalyzerV4") || "[]"
+  );
+  if (!Array.isArray(history) ||
+      !history.every(n => Number.isInteger(n) && n >= 0 && n <= 9)) {
+    history = [];
+  }
+} catch(e) {
+  history = [];
+}
 
-inputBox.addEventListener("input",function(){
- let raw=this.value;
-
- if(/^[0-9,\s]*$/.test(raw)){
-   const digits=raw.replace(/[\s,]+/g,"");
-   this.value=digits.split("").join(" ");
- }
-});
+function save(){
+  localStorage.setItem(
+    "numberAnalyzerV4",
+    JSON.stringify(history)
+  );
+}
 
 function addNumbers(){
- const input=document.getElementById("numbersInput");
- const raw=input.value.trim();
+  const input = document.getElementById("numberInput").value.trim();
 
- if(!raw){
- alert("Please enter numbers.");
- return;
- }
+  if(!input){
+    alert("Please enter numbers.");
+    return;
+  }
 
- // Accept spaces, commas, continuous digits and new lines
- if(!/^[0-9,\s]+$/.test(raw)){
- alert("Only numbers from 0 to 9 are allowed.");
- return;
- }
+  let values;
 
- const parts=raw.split(/[\s,]+/).filter(x=>x!=="");
+  if(/^[0-9,\s]+$/.test(input)){
+    values = input.split(/[\s,]+/)
+      .filter(x => x !== "")
+      .map(Number);
+  }else{
+    alert("Only numbers 0-9, commas and spaces allowed.");
+    return;
+  }
 
- if(parts.length>10){
- alert("Maximum 10 numbers at a time.");
- return;
- }
+  if(!values.length || values.some(n => n < 0 || n > 9)){
+    alert("Enter valid numbers from 0 to 9.");
+    return;
+  }
 
- const values=parts.map(Number);
+  // First entered number is the newest.
+  history = [...values.reverse(), ...history];
 
- // Newest number remains first in history
- numbers.unshift(...values.reverse());
-
- input.value="";
- update();
+  document.getElementById("numberInput").value = "";
+  save();
+  render();
 }
 
-function percentage(a,b){
- return b?Math.round(a/b*100):0;
+function undoLast(){
+  if(!history.length){
+    alert("No entries to undo.");
+    return;
+  }
+
+  history.shift();
+  save();
+  render();
 }
 
-function update(){
+function editNewest(){
+  if(!history.length){
+    alert("No entries available.");
+    return;
+  }
 
- const total=numbers.length;
- const big=numbers.filter(n=>n>=5).length;
- const small=total-big;
+  const value = prompt(
+    "Enter corrected newest number (0-9):",
+    history[0]
+  );
 
- const bp=percentage(big,total);
- const sp=percentage(small,total);
+  if(value === null) return;
 
- document.getElementById("bigCount").textContent=big;
- document.getElementById("smallCount").textContent=small;
- document.getElementById("bigPct").textContent=bp+"%";
- document.getElementById("smallPct").textContent=sp+"%";
- document.getElementById("bigBar").style.width=bp+"%";
- document.getElementById("smallBar").style.width=sp+"%";
- document.getElementById("total").textContent=
- "Total entries: "+total;
+  if(!/^[0-9]$/.test(value.trim())){
+    alert("Enter a single digit from 0 to 9.");
+    return;
+  }
 
- // Recent vs Overall
- const recent=numbers.slice(0,10);
-
- const recentBig=recent.filter(n=>n>=5).length;
- const recentSmall=recent.length-recentBig;
- const recentEven=recent.filter(n=>n%2===0).length;
- const recentOdd=recent.length-recentEven;
-
- const rb=percentage(recentBig,recent.length);
- const rs=percentage(recentSmall,recent.length);
- const re=percentage(recentEven,recent.length);
- const ro=percentage(recentOdd,recent.length);
-
- document.getElementById("recentBig").textContent=rb+"%";
- document.getElementById("recentSmall").textContent=rs+"%";
- document.getElementById("recentEven").textContent=re+"%";
- document.getElementById("recentOdd").textContent=ro+"%";
-
- document.getElementById("overallBig").textContent=bp+"%";
- document.getElementById("overallSmall").textContent=sp+"%";
-
- let comparison="Not enough data.";
-
- if(total>=10){
- if(rb>bp){
- comparison="Recent BIG frequency is higher than overall BIG frequency.";
- }else if(rb<bp){
- comparison="Recent SMALL frequency is higher than overall SMALL frequency.";
- }else{
- comparison="Recent and overall BIG/SMALL percentages are equal.";
- }
- }
-
- document.getElementById("comparison").textContent=comparison;
-
- // Latest Trend History
- const history=document.getElementById("history");
- const historyStatus=document.getElementById("historyStatus");
- history.innerHTML="";
-
- if(total<20){
- history.innerHTML='<p class="muted">Waiting for next batch of 10 numbers.</p>';
- historyStatus.textContent=
- "First 10 numbers are hidden until the second batch arrives.";
- }else{
- numbers.slice(0,10).forEach(n=>{
- const el=document.createElement("span");
- el.className="ball "+(n>=5?"b":"s");
- el.textContent=n+" "+(n>=5?"BIG":"SMALL");
- history.appendChild(el);
- });
- historyStatus.textContent="Latest 10 numbers displayed.";
- }
-
- // Frequency chart
- const freq=document.getElementById("freq");
- freq.innerHTML="";
-
- for(let i=0;i<=9;i++){
- const count=numbers.filter(n=>n===i).length;
- const box=document.createElement("div");
- box.className="freqbox";
-
- const number=document.createElement("b");
- number.textContent=i;
-
- const label=document.createElement("small");
- label.textContent=count+" times";
-
- const bar=document.createElement("div");
- bar.className="freqbar";
- bar.style.width=(total?percentage(count,total):0)+"%";
-
- box.append(number,label,bar);
- freq.appendChild(box);
- }
-
- // Streak detection
- let streak=0;
-
- if(total){
- const first=numbers[0]>=5?"BIG":"SMALL";
-
- for(const n of numbers){
- if((n>=5?"BIG":"SMALL")===first)streak++;
- else break;
- }
- }
-
- // Pattern detection
- const pattern=document.getElementById("pattern");
-
- if(total<3){
- pattern.textContent="Enter at least 3 numbers for pattern analysis.";
- }else{
- const last6=numbers.slice(0,6);
- const categories=last6.map(n=>n>=5?"B":"S");
-
- const alternating=categories.length>=6 &&
- categories.every((v,i)=>i===0||v!==categories[i-1]);
-
- const repeated=categories.length>=3 &&
- categories[0]===categories[1] &&
- categories[1]===categories[2];
-
- const frequency=Array.from({length:10},(_,i)=>({
- number:i,
- count:numbers.filter(n=>n===i).length
- }));
-
- const maxCount=Math.max(...frequency.map(x=>x.count));
- const most=frequency.filter(x=>x.count===maxCount)
- .map(x=>x.number);
-
- let messages=[];
-
- if(alternating){
- messages.push("Alternating BIG/SMALL pattern detected in recent results.");
- }
-
- if(repeated){
- messages.push("Last 3 results belong to the same BIG/SMALL category.");
- }
-
- if(maxCount>1){
- messages.push("Most frequent number(s): "+most.join(", ")+
- " ("+maxCount+" times).");
- }
-
- if(!messages.length){
- messages.push("No strong repeating pattern detected.");
- }
-
- pattern.textContent=messages.join(" ");
- }
-
- // Confidence / trend strength
- const confidence=document.getElementById("confidence");
-
- if(total<5){
- confidence.textContent="Enter at least 5 results for a basic trend assessment.";
- }else{
- const difference=Math.abs(rb-rs);
- let strength="Weak";
-
- if(difference>=40)strength="Strong";
- else if(difference>=20)strength="Moderate";
-
- confidence.textContent=
- "Recent trend strength: "+strength+
- " | Sample size: "+recent.length+
- " | BIG/SMALL difference: "+difference+
- " percentage points. "+
- (total<10?"More data is needed for a larger sample.":
- "This measures historical consistency, not predictive accuracy.");
- }
-
- // Statistical suggestion
- const prediction=document.getElementById("prediction");
- const reason=document.getElementById("predictionReason");
-
- if(total<5){
- prediction.textContent="INSUFFICIENT DATA";
- reason.textContent="Enter at least 5 numbers.";
- }else{
- let suggested;
-
- if(rb>rs){
- suggested="BIG";
- }else if(rs>rb){
- suggested="SMALL";
- }else if(bp>sp){
- suggested="BIG";
- }else if(sp>bp){
- suggested="SMALL";
- }else{
- suggested="NO CLEAR TREND";
- }
-
- prediction.textContent=suggested;
-
- if(suggested==="NO CLEAR TREND"){
- reason.textContent=
- "Historical data is balanced. No clear statistical lean.";
- }else{
- reason.textContent=
- "Historical lean: "+suggested+
- ". Recent BIG: "+rb+"%, SMALL: "+rs+
- "%. Overall BIG: "+bp+"%, SMALL: "+sp+"%.";
- }
- }
-
- // Recent analysis
- if(total){
- document.getElementById("trend").textContent=
- "Latest result: "+(numbers[0]>=5?"BIG":"SMALL")+
- " | Current streak: "+streak+
- " | Overall BIG: "+bp+"%"+
- " | Overall SMALL: "+sp+"%";
- }else{
- document.getElementById("trend").textContent=
- "Add numbers to begin analysis.";
- }
+  history[0] = Number(value);
+  save();
+  render();
 }
 
-function clearData(){
- if(confirm("Clear all analysis history?")){
- numbers=[];
- update();
- }
+function editEntry(index){
+  const value = prompt(
+    "Correct this number (0-9):",
+    history[index]
+  );
+
+  if(value === null) return;
+
+  if(!/^[0-9]$/.test(value.trim())){
+    alert("Enter a single digit from 0 to 9.");
+    return;
+  }
+
+  history[index] = Number(value);
+  save();
+  render();
 }
 
-update();
+function clearHistory(){
+  if(!confirm("Are you sure you want to clear all history?")){
+    return;
+  }
+
+  history = [];
+  save();
+  render();
+}
+
+function typeOf(n){
+  return n >= 5 ? "BIG" : "SMALL";
+}
+
+function countTypes(data){
+  const big = data.filter(n => n >= 5).length;
+  const small = data.length - big;
+
+  return {
+    big,
+    small,
+    total:data.length,
+    bigPct:data.length ? big/data.length*100 : 0,
+    smallPct:data.length ? small/data.length*100 : 0
+  };
+}
+
+function streakCount(){
+  if(!history.length) return "-";
+
+  const latest = typeOf(history[0]);
+  let count = 0;
+
+  for(const n of history){
+    if(typeOf(n) === latest) count++;
+    else break;
+  }
+
+  return latest + " × " + count;
+}
+
+function render(){
+  const all = countTypes(history);
+
+  document.getElementById("bigCount").textContent = all.big;
+  document.getElementById("smallCount").textContent = all.small;
+  document.getElementById("totalCount").textContent = all.total;
+  document.getElementById("streak").textContent = streakCount();
+
+  document.getElementById("overallPercent").textContent =
+    all.total
+    ? `BIG ${all.bigPct.toFixed(1)}% · SMALL ${all.smallPct.toFixed(1)}%`
+    : "No data available.";
+
+  renderHistory();
+  renderComparison();
+  renderFrequency();
+  renderQuality();
+}
+
+function renderHistory(){
+  const box = document.getElementById("history");
+
+  box.innerHTML = "";
+
+  if(!history.length){
+    box.innerHTML = '<span class="empty">No history available.</span>';
+    document.getElementById("historyCount").textContent = "";
+    return;
+  }
+
+  history.slice(0,30).forEach((n,i) => {
+    const item = document.createElement("div");
+    item.className = "number" + (i===0 ? " newest" : "");
+
+    const number = document.createElement("strong");
+    number.textContent = n;
+
+    const label = document.createElement("small");
+    label.textContent = i===0 ? "NEWEST" : "";
+
+    item.append(number,label);
+    item.title = "Tap to correct this entry";
+    item.onclick = () => editEntry(i);
+
+    box.appendChild(item);
+  });
+
+  document.getElementById("historyCount").textContent =
+    `Showing ${Math.min(30,history.length)} of ${history.length} entries.`;
+}
+
+function renderComparison(){
+  const box = document.getElementById("comparison");
+
+  const recent = history.slice(0,10);
+  const previous = history.slice(10);
+
+  if(!recent.length){
+    box.innerHTML = '<p class="empty">Add numbers to see analysis.</p>';
+    return;
+  }
+
+  function section(name,data){
+    const c = countTypes(data);
+
+    const div = document.createElement("div");
+    div.style.marginBottom = "20px";
+
+    const title = document.createElement("strong");
+    title.textContent = name + " (" + data.length + " entries)";
+    div.appendChild(title);
+
+    const text = document.createElement("p");
+    text.className = "note";
+    text.textContent =
+      "BIG: " + c.big + " (" + c.bigPct.toFixed(1) +
+      "%) · SMALL: " + c.small + " (" +
+      c.smallPct.toFixed(1) + "%)";
+    div.appendChild(text);
+
+    const bar = document.createElement("div");
+    bar.className = "bar";
+
+    const fill = document.createElement("div");
+    fill.className = "fill";
+    fill.style.width = c.bigPct + "%";
+
+    bar.appendChild(fill);
+    div.appendChild(bar);
+
+    if(data.length < 10){
+      const note = document.createElement("p");
+      note.className = "note";
+      note.textContent = "Small sample: descriptive statistics only.";
+      div.appendChild(note);
+    }
+
+    box.appendChild(div);
+  }
+
+  box.innerHTML = "";
+  section("RECENT",recent);
+
+  if(previous.length){
+    section("PREVIOUS (EXCLUDING RECENT 10)",previous);
+  }else{
+    const msg = document.createElement("p");
+    msg.className = "note";
+    msg.textContent = "Not enough older entries for comparison.";
+    box.appendChild(msg);
+  }
+}
+
+function renderFrequency(){
+  const box = document.getElementById("frequency");
+  box.innerHTML = "";
+
+  if(!history.length){
+    box.innerHTML = '<p class="empty">No data available.</p>';
+    return;
+  }
+
+  const max = Math.max(1,...Array.from(
+    {length:10},(_,i)=>history.filter(n=>n===i).length
+  ));
+
+  for(let i=0;i<=9;i++){
+    const count = history.filter(n=>n===i).length;
+
+    const row = document.createElement("div");
+    row.className = "frequency";
+
+    const number = document.createElement("span");
+    number.textContent = i;
+
+    const bar = document.createElement("div");
+    bar.className = "bar";
+
+    const fill = document.createElement("div");
+    fill.className = "fill";
+    fill.style.width = (count/max*100) + "%";
+
+    bar.appendChild(fill);
+
+    const total = document.createElement("b");
+    total.textContent = count;
+
+    row.append(number,bar,total);
+    box.appendChild(row);
+  }
+}
+
+function renderQuality(){
+  const box = document.getElementById("quality");
+
+  if(history.length < 10){
+    box.textContent =
+      "Sample size: " + history.length +
+      ". More entries are needed for a larger historical sample. No trend strength is declared.";
+  }else{
+    box.textContent =
+      "Sample size: " + history.length +
+      ". Statistics are descriptive only. No statistical confidence or predictive strength is claimed.";
+  }
+}
+
+render();
 </script>
 </body>
  </html>
