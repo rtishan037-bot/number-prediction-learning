@@ -4,535 +4,368 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Number Analyzer V4.0</title>
-
+<meta name="theme-color" content="#090d1b">
+<title>Number Analyzer V5.0</title>
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;
-  padding:16px;
-  background:#090e1b;
-  color:#eef2ff;
-  font-family:Arial,sans-serif;
-}
-.app{max-width:650px;margin:auto}
-header{
-  text-align:center;
-  padding:18px 5px;
-}
-header h1{margin:0;color:#64a5ff;font-size:26px}
-header p{color:#8795b1;font-size:13px}
-.card{
-  background:#141e30;
-  border:1px solid #263650;
-  border-radius:13px;
-  padding:16px;
-  margin-bottom:14px;
-}
-h3{margin:0 0 14px;color:#8bbaff;font-size:16px}
-input{
-  width:100%;
-  padding:14px;
-  border-radius:9px;
-  border:1px solid #344967;
-  background:#0c1525;
-  color:white;
-  font-size:17px;
-  outline:none;
-}
-button{
-  border:0;
-  border-radius:8px;
-  padding:12px 15px;
-  color:white;
-  background:#2768cf;
-  font-weight:bold;
-  cursor:pointer;
-}
-button:active{opacity:.7}
-.buttons{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.secondary{background:#34435c}
-.danger{background:#a83c4b}
-.success{background:#167d60}
-.note{color:#9aa9c2;font-size:12px;line-height:1.6}
-.stats{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-.stat{
-  background:#0c1525;
-  border-radius:9px;
-  padding:13px;
-  text-align:center;
-}
-.stat strong{display:block;font-size:23px;margin-bottom:5px}
+body{margin:0;padding:15px;background:#090e1b;color:#eef3ff;font-family:Arial,sans-serif}
+.app{max-width:700px;margin:auto}
+header{text-align:center;padding:20px 5px}
+header h1{color:#65aaff;font-size:27px}
+header p,.note{color:#91a0bc;font-size:12px;line-height:1.6}
+.card{background:#141e30;border:1px solid #293956;border-radius:14px;padding:16px;margin-bottom:14px}
+h3{color:#9dc5ff;margin:0 0 14px;font-size:16px}
+input{width:100%;padding:14px;background:#091323;border:1px solid #344967;border-radius:9px;color:white;font-size:17px}
+button{padding:12px 15px;border:0;border-radius:8px;background:#286bd0;color:white;font-weight:bold}
+.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gray{background:#35445d}.red{background:#a83c4b}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#0b1527;border-radius:10px;padding:13px;text-align:center}
+.stat strong{display:block;font-size:24px;margin-bottom:5px}
 .stat small{color:#9baac4}
-.big{color:#47d6a0}
-.small{color:#69aaff}
-.bar{
-  height:9px;
-  background:#263650;
-  border-radius:10px;
-  overflow:hidden;
-  margin:10px 0;
-}
-.fill{height:100%;background:#31bd91}
-.history{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-.number{
-  background:#263650;
-  border:1px solid #3b5275;
-  padding:10px;
-  border-radius:8px;
-  min-width:42px;
-  text-align:center;
-  cursor:pointer;
-}
-.number.newest{
-  background:#176e50;
-  border-color:#45d9a1;
-}
-.number small{display:block;font-size:9px;margin-top:3px}
-.frequency{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin:10px 0;
-}
-.frequency span:first-child{width:20px}
-.frequency .bar{flex:1;margin:0}
-.frequency b{width:25px;text-align:right}
-.label{
-  color:#91a5c6;
-  font-size:12px;
-}
-.value{font-weight:bold}
-.warning{
-  border:1px solid #735d2d;
-  background:#302816;
-  color:#f4d28c;
-  border-radius:9px;
-  padding:12px;
-  font-size:12px;
-  line-height:1.6;
-}
-.empty{color:#8191ad;font-size:13px}
-footer{text-align:center;color:#667793;font-size:11px;padding:20px}
+.green{color:#35d6a0}.blue{color:#65aaff}
+.trends{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.trend{background:#0b1527;border:1px solid #34435e;padding:13px;border-radius:10px}
+.trend strong{display:block;font-size:18px;margin:10px 0}
+.up{color:#35d6a0}.down{color:#ff8297}.flat{color:#f4d58b}
+.history{display:flex;flex-wrap:wrap;gap:8px}
+.num{background:#263650;padding:10px;border-radius:8px;min-width:40px;text-align:center;border:1px solid #405575;cursor:pointer}
+.num:first-child{background:#15543f;border-color:#35d6a0}
+.num small{display:block;font-size:9px}
+.bar{height:9px;background:#293650;border-radius:10px;overflow:hidden;flex:1}
+.fill{height:100%;background:linear-gradient(90deg,#4b9cff,#a78bfa)}
+.freqrow{display:flex;align-items:center;gap:10px;margin:10px 0}
+.freqrow label{width:20px}
+.freqrow b{width:25px;text-align:right}
+canvas{width:100%;height:180px;background:#091323;border-radius:9px;display:block}
+.warning{background:#302816;border:1px solid #735d2d;color:#f4d28c;padding:12px;border-radius:9px;font-size:12px;line-height:1.6}
+@media(min-width:550px){.grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
-
 <body>
 <div class="app">
 
 <header>
 <h1>NUMBER ANALYZER</h1>
-<p>VERSION 4.0 · IMPROVED EDITION</p>
+<p>VERSION 5.0 · ADVANCED DASHBOARD</p>
 </header>
 
 <div class="card">
-<h3>Enter Number</h3>
-<input id="numberInput" placeholder="Enter 0-9 numbers">
-<p class="note">
-Enter latest result first. For multiple entries, first number is NEWEST.
-Example: 5, 4, 8, 2
-</p>
+<h3>Enter Results</h3>
+<input id="entry" placeholder="Example: 5, 2, 8, 1" inputmode="numeric">
+<p class="note">First entered number = NEWEST. Enter digits from 0 to 9.</p>
 <div class="buttons">
-<button onclick="addNumbers()">ADD RESULTS</button>
-<button class="secondary" onclick="undoLast()">UNDO LAST</button>
+<button onclick="add()">ADD RESULTS</button>
+<button class="gray" onclick="undo()">UNDO</button>
 </div>
 </div>
 
 <div class="card">
-<h3>Overall Statistics</h3>
-<div class="stats">
-<div class="stat">
-<strong class="big" id="bigCount">0</strong>
-<small>BIG (5-9)</small>
+<h3>Overview Statistics</h3>
+<div class="grid">
+<div class="stat"><strong id="total">0</strong><small>TOTAL</small></div>
+<div class="stat"><strong class="green" id="big">0</strong><small>BIG (5-9)</small></div>
+<div class="stat"><strong class="blue" id="small">0</strong><small>SMALL (0-4)</small></div>
+<div class="stat"><strong id="streak">-</strong><small>LATEST STREAK</small></div>
 </div>
-<div class="stat">
-<strong class="small" id="smallCount">0</strong>
-<small>SMALL (0-4)</small>
+<p class="note" id="percent">No data available.</p>
 </div>
-<div class="stat">
-<strong id="totalCount">0</strong>
-<small>Total Entries</small>
+
+<div class="card">
+<h3>Trend Analysis</h3>
+<div class="trends">
+<div class="trend">
+<span class="note">NUMBER MOVEMENT</span>
+<strong id="numberTrend">-</strong>
+<p class="note" id="numberInfo">Waiting for data.</p>
 </div>
-<div class="stat">
-<strong id="streak">-</strong>
-<small>Latest Streak</small>
+<div class="trend">
+<span class="note">BIG / SMALL MOVEMENT</span>
+<strong id="bsTrend">-</strong>
+<p class="note" id="bsInfo">Waiting for data.</p>
 </div>
 </div>
-<p class="note" id="overallPercent">No data available.</p>
+<p class="note">Both trends describe historical movement only, not future results.</p>
+</div>
+
+<div class="card">
+<h3>Number Movement Chart</h3>
+<canvas id="numberChart"></canvas>
+<p class="note">Historical numbers, newest on the right of the chart.</p>
+</div>
+
+<div class="card">
+<h3>BIG / SMALL Trend Chart</h3>
+<canvas id="bsChart"></canvas>
+<p class="note">BIG = 5-9 · SMALL = 0-4</p>
 </div>
 
 <div class="card">
 <h3>Latest Trend History</h3>
-<p class="note">Newest → Oldest (Left to Right)</p>
-<div class="history" id="history"></div>
+<p class="note">NEWEST → OLDEST · Tap any number to correct it.</p>
+<div class="history" id="history">No history yet.</div>
 <p class="note" id="historyCount"></p>
 </div>
 
 <div class="card">
-<h3>Recent vs Previous Entries</h3>
-<div id="comparison"></div>
-<p class="note">
-Recent = Latest 10 entries.
-Previous = All entries before those 10.
-The two groups never overlap.
-</p>
-</div>
-
-<div class="card">
 <h3>Number Frequency (0-9)</h3>
-<div id="frequency"></div>
+<div id="frequency">No data available.</div>
 </div>
 
 <div class="card">
-<h3>Data Quality</h3>
-<div id="quality" class="note">
-Waiting for data...
+<h3>Recent vs Previous</h3>
+<div id="comparison" class="note">No data available.</div>
+<p class="note">Recent = newest 10. Previous = all older entries. No overlap.</p>
+</div>
+
+<div class="card">
+<h3>Pattern Detection</h3>
+<div id="patterns" class="note">Waiting for data.</div>
+</div>
+
+<div class="card">
+<h3>Settings & History</h3>
+<div class="buttons">
+<button class="gray" onclick="editNewest()">EDIT NEWEST</button>
+<button class="red" onclick="clearData()">CLEAR HISTORY</button>
 </div>
 </div>
 
 <div class="warning">
-<strong>Important Statistical Notice</strong><br>
-This application only describes historical data. Random results cannot be reliably predicted from previous results. BIG/SMALL frequency does not guarantee the next outcome. No prediction or winning signal is provided.
+<strong>Statistical Notice</strong><br>
+This application analyzes historical data only. Random results cannot be reliably predicted from previous results. UPTREND, DOWNTREND, frequency and streaks are not winning signals.
 </div>
-
-<div class="card">
-<h3>History Management</h3>
-<p class="note">Tap any number in Latest Trend History to correct that entry.</p>
-<div class="buttons">
-<button class="secondary" onclick="editNewest()">EDIT NEWEST</button>
-<button class="danger" onclick="clearHistory()">CLEAR HISTORY</button>
-</div>
-</div>
-
-<footer>
-NUMBER ANALYZER V4.0 · IMPROVED EDITION
-</footer>
 
 </div>
 
 <script>
-let history = [];
+let data=[];
 
-try {
-  history = JSON.parse(
-    localStorage.getItem("numberAnalyzerV4") || "[]"
-  );
-  if (!Array.isArray(history) ||
-      !history.every(n => Number.isInteger(n) && n >= 0 && n <= 9)) {
-    history = [];
-  }
-} catch(e) {
-  history = [];
-}
+try{
+const saved=JSON.parse(localStorage.getItem("NA_V5_FRESH")||"[]");
+if(Array.isArray(saved)&&saved.every(n=>Number.isInteger(n)&&n>=0&&n<=9))data=saved;
+}catch(e){data=[];}
+
+const $=id=>document.getElementById(id);
+const type=n=>n>=5?"BIG":"SMALL";
 
 function save(){
-  localStorage.setItem(
-    "numberAnalyzerV4",
-    JSON.stringify(history)
-  );
+localStorage.setItem("NA_V5_FRESH",JSON.stringify(data));
 }
 
-function addNumbers(){
-  const input = document.getElementById("numberInput").value.trim();
+function add(){
+let raw=$("entry").value.trim();
+if(!raw)return alert("Enter numbers first.");
 
-  if(!input){
-    alert("Please enter numbers.");
-    return;
-  }
+if(!/^[0-9,\s]+$/.test(raw))
+return alert("Only digits 0-9 allowed.");
 
-  let values;
+let nums=raw.split(/[\s,]+/).filter(Boolean).map(Number);
+data=[...nums.reverse(),...data];
 
-  if(/^[0-9,\s]+$/.test(input)){
-    values = input.split(/[\s,]+/)
-      .filter(x => x !== "")
-      .map(Number);
-  }else{
-    alert("Only numbers 0-9, commas and spaces allowed.");
-    return;
-  }
-
-  if(!values.length || values.some(n => n < 0 || n > 9)){
-    alert("Enter valid numbers from 0 to 9.");
-    return;
-  }
-
-  // First entered number is the newest.
-  history = [...values.reverse(), ...history];
-
-  document.getElementById("numberInput").value = "";
-  save();
-  render();
+$("entry").value="";
+save();
+render();
 }
 
-function undoLast(){
-  if(!history.length){
-    alert("No entries to undo.");
-    return;
-  }
-
-  history.shift();
-  save();
-  render();
+function undo(){
+if(!data.length)return alert("No history.");
+data.shift();
+save();
+render();
 }
 
 function editNewest(){
-  if(!history.length){
-    alert("No entries available.");
-    return;
-  }
-
-  const value = prompt(
-    "Enter corrected newest number (0-9):",
-    history[0]
-  );
-
-  if(value === null) return;
-
-  if(!/^[0-9]$/.test(value.trim())){
-    alert("Enter a single digit from 0 to 9.");
-    return;
-  }
-
-  history[0] = Number(value);
-  save();
-  render();
+if(!data.length)return alert("No data.");
+let v=prompt("Correct newest number:",data[0]);
+if(v===null)return;
+if(!/^[0-9]$/.test(v.trim()))return alert("Enter 0-9.");
+data[0]=Number(v);
+save();
+render();
 }
 
-function editEntry(index){
-  const value = prompt(
-    "Correct this number (0-9):",
-    history[index]
-  );
-
-  if(value === null) return;
-
-  if(!/^[0-9]$/.test(value.trim())){
-    alert("Enter a single digit from 0 to 9.");
-    return;
-  }
-
-  history[index] = Number(value);
-  save();
-  render();
+function edit(i){
+let v=prompt("Correct number:",data[i]);
+if(v===null)return;
+if(!/^[0-9]$/.test(v.trim()))return alert("Enter 0-9.");
+data[i]=Number(v);
+save();
+render();
 }
 
-function clearHistory(){
-  if(!confirm("Are you sure you want to clear all history?")){
-    return;
-  }
-
-  history = [];
-  save();
-  render();
+function clearData(){
+if(!confirm("Delete all V5.0 data?"))return;
+data=[];
+save();
+render();
 }
 
-function typeOf(n){
-  return n >= 5 ? "BIG" : "SMALL";
+function streak(){
+if(!data.length)return "-";
+let t=type(data[0]),c=0;
+for(let n of data){if(type(n)!==t)break;c++;}
+return t+" × "+c;
 }
 
-function countTypes(data){
-  const big = data.filter(n => n >= 5).length;
-  const small = data.length - big;
-
-  return {
-    big,
-    small,
-    total:data.length,
-    bigPct:data.length ? big/data.length*100 : 0,
-    smallPct:data.length ? small/data.length*100 : 0
-  };
+function movement(arr){
+if(arr.length<2)return ["WAITING","Need at least 2 results.","flat"];
+let up=0,down=0,equal=0;
+for(let i=0;i<arr.length-1;i++){
+if(arr[i]>arr[i+1])up++;
+else if(arr[i]<arr[i+1])down++;
+else equal++;
+}
+if(up>down)return ["UPTREND ↗",up+" upward, "+down+" downward steps.","up"];
+if(down>up)return ["DOWNTREND ↘",down+" downward, "+up+" upward steps.","down"];
+return ["MIXED / FLAT",up+" upward, "+down+" downward steps.","flat"];
 }
 
-function streakCount(){
-  if(!history.length) return "-";
+function trend(id,info,result){
+$(id).textContent=result[0];
+$(id).className=result[2];
+$(info).textContent=result[1];
+}
 
-  const latest = typeOf(history[0]);
-  let count = 0;
+function draw(id,arr,category){
+let canvas=$(id),ctx=canvas.getContext("2d");
+let w=canvas.clientWidth||300,h=180,dpr=window.devicePixelRatio||1;
+canvas.width=w*dpr;canvas.height=h*dpr;
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,w,h);
 
-  for(const n of history){
-    if(typeOf(n) === latest) count++;
-    else break;
-  }
+let values=arr.slice(0,25).reverse();
+if(!values.length){
+ctx.fillStyle="#91a0bc";ctx.fillText("Waiting for data...",20,90);return;
+}
 
-  return latest + " × " + count;
+let left=24,right=12,top=15,bottom=18;
+let max=category?1:9;
+let x=i=>left+(values.length===1?(w-left-right)/2:i*(w-left-right)/(values.length-1));
+let y=v=>top+(h-top-bottom)*(1-(v/max));
+
+ctx.strokeStyle="#293650";
+for(let i=0;i<6;i++){
+let yy=top+i*(h-top-bottom)/5;
+ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(w-right,yy);ctx.stroke();
+}
+
+ctx.strokeStyle="#54a5ff";
+ctx.lineWidth=2.5;
+ctx.beginPath();
+values.forEach((n,i)=>{
+let v=category?(n>=5?1:0):n;
+if(i===0)ctx.moveTo(x(i),y(v));
+else ctx.lineTo(x(i),y(v));
+});
+ctx.stroke();
+
+values.forEach((n,i)=>{
+let v=category?(n>=5?1:0):n;
+ctx.fillStyle=category?(n>=5?"#35d6a0":"#a78bfa"):"#54a5ff";
+ctx.beginPath();ctx.arc(x(i),y(v),3,0,Math.PI*2);ctx.fill();
+});
+ctx.fillStyle="#91a0bc";ctx.font="10px Arial";
+ctx.fillText(category?"BIG":"9",3,18);
+ctx.fillText(category?"SMALL":"0",3,160);
 }
 
 function render(){
-  const all = countTypes(history);
+let big=data.filter(n=>n>=5).length;
+let small=data.length-big;
+$("total").textContent=data.length;
+$("big").textContent=big;
+$("small").textContent=small;
+$("streak").textContent=streak();
+$("percent").textContent=data.length?
+`BIG ${(big/data.length*100).toFixed(1)}% · SMALL ${(small/data.length*100).toFixed(1)}%`:
+"No data available.";
 
-  document.getElementById("bigCount").textContent = all.big;
-  document.getElementById("smallCount").textContent = all.small;
-  document.getElementById("totalCount").textContent = all.total;
-  document.getElementById("streak").textContent = streakCount();
+trend("numberTrend","numberInfo",movement(data));
+trend("bsTrend","bsInfo",movement(data.map(n=>n>=5?1:0)));
 
-  document.getElementById("overallPercent").textContent =
-    all.total
-    ? `BIG ${all.bigPct.toFixed(1)}% · SMALL ${all.smallPct.toFixed(1)}%`
-    : "No data available.";
+draw("numberChart",data,false);
+draw("bsChart",data,true);
 
-  renderHistory();
-  renderComparison();
-  renderFrequency();
-  renderQuality();
+let h=$("history");
+h.innerHTML="";
+if(!data.length){
+h.textContent="No history yet.";
+}else{
+data.slice(0,30).forEach((n,i)=>{
+let el=document.createElement("div");
+el.className="num";
+let strong=document.createElement("strong");
+strong.textContent=n;
+let label=document.createElement("small");
+label.textContent=i===0?"NEWEST":"";
+el.append(strong,label);
+el.onclick=()=>edit(i);
+h.append(el);
+});
+}
+$("historyCount").textContent=`Showing ${Math.min(30,data.length)} of ${data.length} entries.`;
+
+let f=$("frequency");
+f.innerHTML="";
+if(!data.length){f.textContent="No data available.";}
+else{
+let counts=Array.from({length:10},(_,n)=>data.filter(v=>v===n).length);
+let max=Math.max(1,...counts);
+counts.forEach((c,n)=>{
+let row=document.createElement("div");
+row.className="freqrow";
+let label=document.createElement("label");
+label.textContent=n;
+let bar=document.createElement("div");
+bar.className="bar";
+let fill=document.createElement("div");
+fill.className="fill";
+fill.style.width=(c/max*100)+"%";
+bar.append(fill);
+let val=document.createElement("b");
+val.textContent=c;
+row.append(label,bar,val);
+f.append(row);
+});
 }
 
-function renderHistory(){
-  const box = document.getElementById("history");
-
-  box.innerHTML = "";
-
-  if(!history.length){
-    box.innerHTML = '<span class="empty">No history available.</span>';
-    document.getElementById("historyCount").textContent = "";
-    return;
-  }
-
-  history.slice(0,30).forEach((n,i) => {
-    const item = document.createElement("div");
-    item.className = "number" + (i===0 ? " newest" : "");
-
-    const number = document.createElement("strong");
-    number.textContent = n;
-
-    const label = document.createElement("small");
-    label.textContent = i===0 ? "NEWEST" : "";
-
-    item.append(number,label);
-    item.title = "Tap to correct this entry";
-    item.onclick = () => editEntry(i);
-
-    box.appendChild(item);
-  });
-
-  document.getElementById("historyCount").textContent =
-    `Showing ${Math.min(30,history.length)} of ${history.length} entries.`;
+let comp=$("comparison");
+comp.innerHTML="";
+if(!data.length){comp.textContent="No data available.";}
+else{
+let groups=[["RECENT · LAST 10",data.slice(0,10)],["PREVIOUS · OLDER ONLY",data.slice(10)]];
+groups.forEach(([name,arr])=>{
+let b=arr.filter(n=>n>=5).length;
+let s=arr.length-b;
+let p=document.createElement("p");
+p.textContent=`${name} (${arr.length}): BIG ${b} (${arr.length?(b/arr.length*100).toFixed(1):0}%) · SMALL ${s} (${arr.length?(s/arr.length*100).toFixed(1):0}%)`;
+comp.append(p);
+});
 }
 
-function renderComparison(){
-  const box = document.getElementById("comparison");
-
-  const recent = history.slice(0,10);
-  const previous = history.slice(10);
-
-  if(!recent.length){
-    box.innerHTML = '<p class="empty">Add numbers to see analysis.</p>';
-    return;
-  }
-
-  function section(name,data){
-    const c = countTypes(data);
-
-    const div = document.createElement("div");
-    div.style.marginBottom = "20px";
-
-    const title = document.createElement("strong");
-    title.textContent = name + " (" + data.length + " entries)";
-    div.appendChild(title);
-
-    const text = document.createElement("p");
-    text.className = "note";
-    text.textContent =
-      "BIG: " + c.big + " (" + c.bigPct.toFixed(1) +
-      "%) · SMALL: " + c.small + " (" +
-      c.smallPct.toFixed(1) + "%)";
-    div.appendChild(text);
-
-    const bar = document.createElement("div");
-    bar.className = "bar";
-
-    const fill = document.createElement("div");
-    fill.className = "fill";
-    fill.style.width = c.bigPct + "%";
-
-    bar.appendChild(fill);
-    div.appendChild(bar);
-
-    if(data.length < 10){
-      const note = document.createElement("p");
-      note.className = "note";
-      note.textContent = "Small sample: descriptive statistics only.";
-      div.appendChild(note);
-    }
-
-    box.appendChild(div);
-  }
-
-  box.innerHTML = "";
-  section("RECENT",recent);
-
-  if(previous.length){
-    section("PREVIOUS (EXCLUDING RECENT 10)",previous);
-  }else{
-    const msg = document.createElement("p");
-    msg.className = "note";
-    msg.textContent = "Not enough older entries for comparison.";
-    box.appendChild(msg);
-  }
+let patterns=$("patterns");
+patterns.innerHTML="";
+if(data.length<2){
+patterns.textContent="Add at least 2 results.";
+}else{
+let sample=data.slice(0,Math.min(10,data.length));
+let unique=new Set(sample).size;
+let repeats=sample.slice(0,-1).filter((n,i)=>n===sample[i+1]).length;
+[
+`Latest sample: ${sample.length} entries.`,
+`Distinct digits: ${unique}.`,
+`Adjacent repeated digits: ${repeats}.`,
+"These are historical descriptions, not predictions."
+].forEach(t=>{
+let p=document.createElement("p");p.textContent="• "+t;patterns.append(p);
+});
+}
 }
 
-function renderFrequency(){
-  const box = document.getElementById("frequency");
-  box.innerHTML = "";
-
-  if(!history.length){
-    box.innerHTML = '<p class="empty">No data available.</p>';
-    return;
-  }
-
-  const max = Math.max(1,...Array.from(
-    {length:10},(_,i)=>history.filter(n=>n===i).length
-  ));
-
-  for(let i=0;i<=9;i++){
-    const count = history.filter(n=>n===i).length;
-
-    const row = document.createElement("div");
-    row.className = "frequency";
-
-    const number = document.createElement("span");
-    number.textContent = i;
-
-    const bar = document.createElement("div");
-    bar.className = "bar";
-
-    const fill = document.createElement("div");
-    fill.className = "fill";
-    fill.style.width = (count/max*100) + "%";
-
-    bar.appendChild(fill);
-
-    const total = document.createElement("b");
-    total.textContent = count;
-
-    row.append(number,bar,total);
-    box.appendChild(row);
-  }
-}
-
-function renderQuality(){
-  const box = document.getElementById("quality");
-
-  if(history.length < 10){
-    box.textContent =
-      "Sample size: " + history.length +
-      ". More entries are needed for a larger historical sample. No trend strength is declared.";
-  }else{
-    box.textContent =
-      "Sample size: " + history.length +
-      ". Statistics are descriptive only. No statistical confidence or predictive strength is claimed.";
-  }
-}
-
+$("entry").addEventListener("keydown",e=>{if(e.key==="Enter")add();});
+window.addEventListener("resize",()=>{draw("numberChart",data,false);draw("bsChart",data,true);});
 render();
 </script>
 </body>
- </html>
- 
+</html>
