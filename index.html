@@ -19,10 +19,11 @@ h1{text-align:center;color:#a78bfa;margin-bottom:5px}
  border-radius:15px;padding:17px;margin:15px 0;
 }
 h3{margin-top:0;color:#c4b5fd}
-input{
+textarea{
  width:100%;padding:14px;border-radius:9px;
  background:#080d1c;border:1px solid #52648a;
- color:white;font-size:18px;
+ color:white;font-size:18px;resize:vertical;
+ min-height:85px;
 }
 button{
  padding:12px;border:0;border-radius:9px;
@@ -31,28 +32,42 @@ button{
 }
 .mainbtn{width:100%;margin-top:10px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{
- padding:17px;border-radius:12px;text-align:center;
-}
+.stat{padding:17px;border-radius:12px;text-align:center}
 .big{background:#15345b;color:#60a5fa}
 .small{background:#174536;color:#4ade80}
 .stat strong{font-size:26px;display:block}
 .muted{color:#94a3b8;font-size:12px}
-.bar{height:12px;background:#27334b;border-radius:20px;overflow:hidden;display:flex}
+.bar{
+ height:12px;background:#27334b;border-radius:20px;
+ overflow:hidden;display:flex
+}
 .bigbar{background:#3b82f6}
 .smallbar{background:#22c55e}
 .row{display:flex;justify-content:space-between;margin:13px 0}
 .history{display:flex;flex-wrap:wrap;gap:8px}
 .ball{
  padding:10px 13px;border-radius:9px;
- font-weight:bold;background:#26334d;
+ font-weight:bold;background:#26334d
 }
 .ball.b{color:#60a5fa}
 .ball.s{color:#4ade80}
-.trend{font-size:13px;color:#cbd5e1}
+.trend{font-size:13px;color:#cbd5e1;line-height:1.7}
 #freq{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.freqbox{background:#202d46;padding:10px 3px;text-align:center;border-radius:9px}
+.freqbox{
+ background:#202d46;padding:10px 3px;
+ text-align:center;border-radius:9px
+}
 .freqbox b{display:block;font-size:20px}
+.freqbar{
+ height:5px;background:#3b82f6;
+ margin-top:7px;border-radius:5px
+}
+.suggestion{
+ background:#202d46;border-radius:10px;
+ padding:13px;margin-top:10px
+}
+.good{color:#4ade80}
+.warning{color:#fbbf24}
 </style>
 </head>
 <body>
@@ -62,9 +77,16 @@ button{
 <p class="sub">VERSION 4.0 • TREND & STATISTICS</p>
 
 <div class="card">
-<h3>Enter Number (0–9)</h3>
-<input id="number" type="number" min="0" max="9" placeholder="Enter number">
-<button class="mainbtn" onclick="addNumber()">ANALYZE NUMBER</button>
+<h3>Enter Numbers (0–9)</h3>
+<textarea id="numbersInput"
+placeholder="Example: 7 2 8 3 5 1 9 4 6 0"></textarea>
+<p class="muted">
+Enter up to 10 numbers together.
+Use spaces, commas or new lines.
+</p>
+<button class="mainbtn" onclick="addNumbers()">
+ANALYZE NUMBERS
+</button>
 </div>
 
 <div class="grid">
@@ -92,6 +114,23 @@ button{
 </div>
 
 <div class="card">
+<h3>Recent vs Overall Analysis</h3>
+<div class="row">
+<span>Recent 10 BIG</span><b id="recentBig">0%</b>
+</div>
+<div class="row">
+<span>Recent 10 SMALL</span><b id="recentSmall">0%</b>
+</div>
+<div class="row">
+<span>Overall BIG</span><b id="overallBig">0%</b>
+</div>
+<div class="row">
+<span>Overall SMALL</span><b id="overallSmall">0%</b>
+</div>
+<p class="muted" id="comparison">Enter numbers to compare trends.</p>
+</div>
+
+<div class="card">
 <h3>Latest Trend History</h3>
 <div class="history" id="history">
 <p class="muted">No entries yet.</p>
@@ -104,15 +143,48 @@ button{
 </div>
 
 <div class="card">
-<h3>Recent Analysis</h3>
-<p class="trend" id="trend">Add numbers to begin analysis.</p>
+<h3>Pattern Detection</h3>
+<p class="trend" id="pattern">
+Waiting for data...
+</p>
 </div>
 
 <div class="card">
-<button onclick="clearData()" style="background:#b93850;width:100%">
+<h3>Trend Strength & Confidence</h3>
+<p class="trend" id="confidence">
+Not enough data.
+</p>
+</div>
+
+<div class="card">
+<h3>Prediction Suggestion</h3>
+<div class="suggestion">
+<h2 id="prediction">--</h2>
+<p class="trend" id="predictionReason">
+Enter numbers to analyze historical trends.
+</p>
+<p class="muted">
+This is a statistical suggestion, not a guaranteed next result.
+</p>
+</div>
+</div>
+
+<div class="card">
+<h3>Recent Analysis</h3>
+<p class="trend" id="trend">
+Add numbers to begin analysis.
+</p>
+</div>
+
+<div class="card">
+<button onclick="clearData()"
+style="background:#b93850;width:100%">
 CLEAR HISTORY
 </button>
-<p class="muted">This tool displays past data only. It does not predict future outcomes.</p>
+<p class="muted">
+Analysis uses the numbers you enter. History stays in this page session.
+Past results cannot guarantee future outcomes.
+</p>
 </div>
 
 </div>
@@ -120,28 +192,51 @@ CLEAR HISTORY
 <script>
 let numbers=[];
 
-function addNumber(){
- const input=document.getElementById("number");
- const value=input.value;
+// Add up to 10 numbers at once
+function addNumbers(){
+ const input=document.getElementById("numbersInput");
+ const raw=input.value.trim();
 
- if(value==="" || !Number.isInteger(Number(value)) ||
- Number(value)<0 || Number(value)>9){
- alert("Please enter a number from 0 to 9");
+ if(!raw){
+ alert("Please enter numbers.");
  return;
  }
 
- numbers.unshift(Number(value));
+ // Accept spaces, commas and new lines
+ const parts=raw.split(/[\s,]+/).filter(x=>x!=="");
+
+ if(parts.length>10){
+ alert("Maximum 10 numbers at a time.");
+ return;
+ }
+
+ if(parts.some(x=>!/^[0-9]$/.test(x))){
+ alert("Only numbers from 0 to 9 are allowed.");
+ return;
+ }
+
+ const values=parts.map(Number);
+
+ // First entered number is treated as the oldest
+ // Last entered number is treated as the newest
+ numbers.unshift(...values.reverse());
+
  input.value="";
  update();
 }
 
-function update(){
- let big=numbers.filter(n=>n>=5).length;
- let small=numbers.length-big;
- let total=numbers.length;
+function percentage(a,b){
+ return b?Math.round(a/b*100):0;
+}
 
- let bp=total?Math.round(big/total*100):0;
- let sp=total?100-bp:0;
+function update(){
+
+ const total=numbers.length;
+ const big=numbers.filter(n=>n>=5).length;
+ const small=total-big;
+
+ const bp=percentage(big,total);
+ const sp=percentage(small,total);
 
  document.getElementById("bigCount").textContent=big;
  document.getElementById("smallCount").textContent=small;
@@ -149,44 +244,188 @@ function update(){
  document.getElementById("smallPct").textContent=sp+"%";
  document.getElementById("bigBar").style.width=bp+"%";
  document.getElementById("smallBar").style.width=sp+"%";
- document.getElementById("total").textContent="Total entries: "+total;
+ document.getElementById("total").textContent=
+ "Total entries: "+total;
 
- let history=document.getElementById("history");
+ // History
+ const history=document.getElementById("history");
  history.innerHTML="";
 
- if(total===0){
- history.innerHTML='<p class="muted">No entries yet.</p>';
+ if(!total){
+ history.textContent="No entries yet.";
  }else{
  numbers.slice(0,30).forEach(n=>{
- let el=document.createElement("span");
+ const el=document.createElement("span");
  el.className="ball "+(n>=5?"b":"s");
  el.textContent=n+" "+(n>=5?"BIG":"SMALL");
  history.appendChild(el);
  });
  }
 
- let freq=document.getElementById("freq");
+ // Frequency chart
+ const freq=document.getElementById("freq");
  freq.innerHTML="";
+
  for(let i=0;i<=9;i++){
- let count=numbers.filter(n=>n===i).length;
- let box=document.createElement("div");
+ const count=numbers.filter(n=>n===i).length;
+ const box=document.createElement("div");
  box.className="freqbox";
- box.innerHTML="<b>"+i+"</b><small>"+count+" times</small>";
+
+ const number=document.createElement("b");
+ number.textContent=i;
+
+ const label=document.createElement("small");
+ label.textContent=count+" times";
+
+ const bar=document.createElement("div");
+ bar.className="freqbar";
+ bar.style.width=(total?percentage(count,total):0)+"%";
+
+ box.append(number,label,bar);
  freq.appendChild(box);
  }
 
+ // Recent 10 vs overall
+ const recent=numbers.slice(0,10);
+ const recentBig=recent.filter(n=>n>=5).length;
+ const recentSmall=recent.length-recentBig;
+
+ const rb=percentage(recentBig,recent.length);
+ const rs=percentage(recentSmall,recent.length);
+
+ document.getElementById("recentBig").textContent=rb+"%";
+ document.getElementById("recentSmall").textContent=rs+"%";
+ document.getElementById("overallBig").textContent=bp+"%";
+ document.getElementById("overallSmall").textContent=sp+"%";
+
+ let comparison="Not enough recent data.";
+
+ if(recent.length){
+ if(rb>bp){
+ comparison="Recent BIG frequency is higher than overall BIG frequency.";
+ }else if(rb<bp){
+ comparison="Recent SMALL frequency is higher than overall SMALL frequency.";
+ }else{
+ comparison="Recent and overall BIG/SMALL percentages are equal.";
+ }
+ }
+ document.getElementById("comparison").textContent=comparison;
+
+ // Streak detection
  let streak=0;
  if(total){
- let first=numbers[0]>=5?"BIG":"SMALL";
- for(let n of numbers){
+ const first=numbers[0]>=5?"BIG":"SMALL";
+ for(const n of numbers){
  if((n>=5?"BIG":"SMALL")===first)streak++;
  else break;
  }
+ }
+
+ // Pattern detection
+ const pattern=document.getElementById("pattern");
+
+ if(total<3){
+ pattern.textContent="Enter at least 3 numbers for pattern analysis.";
+ }else{
+ const last6=numbers.slice(0,6);
+ const categories=last6.map(n=>n>=5?"B":"S");
+
+ const alternating=categories.length>=6 &&
+ categories.every((v,i)=>i===0||v!==categories[i-1]);
+
+ const repeated=categories.length>=3 &&
+ categories[0]===categories[1] &&
+ categories[1]===categories[2];
+
+ const frequency=Array.from({length:10},(_,i)=>({
+ number:i,
+ count:numbers.filter(n=>n===i).length
+ }));
+
+ const maxCount=Math.max(...frequency.map(x=>x.count));
+ const most=frequency.filter(x=>x.count===maxCount)
+ .map(x=>x.number);
+
+ let messages=[];
+
+ if(alternating){
+ messages.push("Alternating BIG/SMALL pattern detected in recent results.");
+ }
+ if(repeated){
+ messages.push("Last 3 results belong to the same BIG/SMALL category.");
+ }
+ if(maxCount>1){
+ messages.push("Most frequent number(s): "+most.join(", ")+
+ " ("+maxCount+" times).");
+ }
+ if(!messages.length){
+ messages.push("No strong repeating pattern detected.");
+ }
+
+ pattern.textContent=messages.join(" ");
+ }
+
+ // Confidence / trend strength
+ const confidence=document.getElementById("confidence");
+
+ if(total<5){
+ confidence.textContent="Enter at least 5 results for a basic trend assessment.";
+ }else{
+ const difference=Math.abs(rb-rs);
+ let strength="Weak";
+
+ if(difference>=40)strength="Strong";
+ else if(difference>=20)strength="Moderate";
+
+ confidence.textContent=
+ "Recent trend strength: "+strength+
+ " | Sample size: "+recent.length+
+ " | BIG/SMALL difference: "+difference+" percentage points. "+
+ (total<10?"More data is needed for a larger sample.":"This measures historical consistency, not predictive accuracy.");
+ }
+
+ // Statistical suggestion
+ const prediction=document.getElementById("prediction");
+ const reason=document.getElementById("predictionReason");
+
+ if(total<5){
+ prediction.textContent="INSUFFICIENT DATA";
+ reason.textContent="Enter at least 5 numbers.";
+ }else{
+ let suggested;
+
+ if(rb>rs){
+ suggested="BIG";
+ }else if(rs>rb){
+ suggested="SMALL";
+ }else if(bp>sp){
+ suggested="BIG";
+ }else if(sp>bp){
+ suggested="SMALL";
+ }else{
+ suggested="NO CLEAR TREND";
+ }
+
+ prediction.textContent=suggested;
+
+ if(suggested==="NO CLEAR TREND"){
+ reason.textContent=
+ "Historical data is balanced. No clear statistical lean.";
+ }else{
+ reason.textContent=
+ "Historical lean: "+suggested+
+ ". Recent 10: BIG "+rb+"%, SMALL "+rs+
+ "%. Overall: BIG "+bp+"%, SMALL "+sp+"%.";
+ }
+ }
+
+ // Recent analysis
+ if(total){
  document.getElementById("trend").textContent=
- "Latest result: "+first+
- " | Current consecutive run: "+streak+
- " | Historical BIG: "+bp+"%"+
- " | Historical SMALL: "+sp+"%";
+ "Latest result: "+(numbers[0]>=5?"BIG":"SMALL")+
+ " | Current streak: "+streak+
+ " | Overall BIG: "+bp+"%"+
+ " | Overall SMALL: "+sp+"%";
  }else{
  document.getElementById("trend").textContent=
  "Add numbers to begin analysis.";
@@ -199,8 +438,9 @@ function clearData(){
  update();
  }
 }
+
 update();
 </script>
 </body>
-  </html>
-  
+ </html>
+ 
