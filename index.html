@@ -3,464 +3,343 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Number Prediction Analyzer V5.0</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Number Analyzer V5.0</title>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#030514;color:#f4f5ff;
- font-family:Arial,sans-serif;
- padding:12px;
-}
-:root{
- --blue:#087cff;--cyan:#00d9ff;
- --purple:#a000ff;--green:#00ef52;
- --panel:#090e25;--border:#285bff;
-}
-header{
- display:flex;justify-content:space-between;align-items:center;
- flex-wrap:wrap;gap:12px;padding:12px;
- border-bottom:1px solid #243d88;
-}
-h1{font-size:23px;margin:0;text-shadow:0 0 12px #6b52ff}
-.sub{font-size:12px;color:#aeb9e9;margin-top:5px}
-.version{color:#ffe34e;font-weight:bold}
-nav{
- display:flex;overflow-x:auto;gap:7px;margin:12px 0;
-}
-nav button,.mode button{
- background:#101832;color:#dbe4ff;
- border:1px solid #334c9a;border-radius:20px;
- padding:12px 17px;white-space:nowrap;
-}
-button{cursor:pointer}
-button.active{
- background:linear-gradient(100deg,#075dff,#9500ff);
- box-shadow:0 0 15px #315cff;
- color:white;border-color:#00cfff;
-}
-.panel{
- background:linear-gradient(145deg,#10152f,#06091b);
- border:1px solid #285cff;border-radius:18px;
- padding:15px;margin-bottom:13px;
- box-shadow:0 0 12px #123b9b55;
-}
-h2{font-size:18px;margin:0 0 14px}
-h3{font-size:15px;margin:0 0 12px}
-input{
- width:100%;background:#080c20;color:white;
- border:1px solid #7050d9;border-radius:12px;
- padding:15px;font-size:18px;outline:none;
-}
-.primary{
- width:100%;margin-top:12px;padding:14px;
- border:0;border-radius:13px;
- color:white;font-size:17px;font-weight:bold;
- background:linear-gradient(100deg,#a000ff,#5b24ff);
- box-shadow:0 0 15px #8b00ff77;
-}
-.grid{display:grid;grid-template-columns:1fr 1.8fr;gap:13px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.stat{
- background:#101b3a;padding:12px;border-radius:10px;
- border:1px solid #283e78;
-}
-.stat small{color:#aab9e8}
-.stat strong{display:block;font-size:23px;margin-top:6px}
-.numbers{
- display:flex;flex-wrap:wrap;gap:9px;
- justify-content:space-between;
-}
-.number{text-align:center;min-width:40px}
-.ball{
- width:43px;height:43px;border-radius:50%;
- display:grid;place-items:center;font-size:22px;font-weight:bold;
- box-shadow:0 0 12px #167aff77;
-}
-.big{background:linear-gradient(145deg,#168cff,#0042bc)}
-.small{background:linear-gradient(145deg,#28e54e,#008d20)}
-.number span{display:block;margin-top:5px;font-size:12px}
-.blue{color:#28aaff}.green{color:#00ed58}
-.bar{
- height:17px;background:#182342;border-radius:20px;
- overflow:hidden;display:flex;margin-top:12px;
-}
-.bar div{height:100%}
-.bigbar{background:#087cff}
-.smallbar{background:#00e64b}
-.mode{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
-.mode button{flex:1}
-canvas{width:100%;height:220px;display:block}
-.chart-bars{
- display:flex;align-items:end;justify-content:space-around;
- height:150px;border-bottom:1px solid #52618d;
- gap:5px;padding-top:10px;
-}
-.chart-item{flex:1;text-align:center;height:100%;
- display:flex;flex-direction:column;justify-content:end}
-.chart-item i{display:block;border-radius:7px 7px 0 0;min-height:3px}
-.chart-item small{font-size:12px;margin-top:5px}
-.history{display:flex;gap:7px;flex-wrap:wrap}
-.tag{
- padding:10px 15px;border-radius:25px;
- font-weight:bold;color:white;
-}
-.result{background:#101a39;border:1px solid #3153a5;
- padding:10px;border-radius:10px;margin:7px 0}
-.good{color:#00ed58}.warn{color:#ffdc52}
+body{margin:0;padding:10px;background:#030514;color:white;font-family:Arial}
+header{padding:15px;background:#090d25;border:1px solid #315bff;border-radius:15px}
+h1{font-size:22px;color:#c9c8ff;margin:0}
+header p{font-size:12px;color:#aaa}
+nav{display:flex;overflow-x:auto;gap:7px;margin:12px 0}
+button{cursor:pointer;color:white;background:#111b38;border:1px solid #3559a8;border-radius:10px;padding:11px}
+button.active{background:linear-gradient(90deg,#075dff,#9b00ff)}
+.panel{background:linear-gradient(145deg,#111632,#070a1d);border:1px solid #315bff;border-radius:15px;padding:14px;margin-bottom:12px;box-shadow:0 0 10px #1744a944}
+h2{font-size:17px;margin:0 0 13px}
+h3{font-size:14px}
+input{width:100%;padding:15px;background:#080d25;color:white;border:1px solid #7950dc;border-radius:10px;font-size:20px;letter-spacing:3px}
+.primary{width:100%;margin-top:10px;background:linear-gradient(90deg,#a000ff,#4b32ff);font-size:16px}
+.grid{display:grid;grid-template-columns:1fr 1.5fr;gap:10px}
+.numbers{display:flex;flex-wrap:wrap;gap:8px}
+.ball{width:39px;height:39px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:bold}
+.big{background:#087cff;box-shadow:0 0 10px #087cff}
+.small{background:#00b938;box-shadow:0 0 10px #00b938}
+.numbers span{font-size:11px;text-align:center;display:block;margin-top:4px}
+.bar{display:flex;height:16px;background:#202c4b;border-radius:20px;overflow:hidden;margin:15px 0}
+#bigBar{background:#087cff}
+#smallBar{background:#00d64a}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:#101d3d;padding:12px;border-radius:10px}
+.stat small{color:#aab8db}
+.stat strong{display:block;font-size:22px;margin-top:5px}
+canvas{width:100%;height:200px}
+.pattern{padding:12px;background:#101a36;border:1px solid #283f77;border-radius:10px;margin:8px 0}
+.pattern-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.dot{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:bold}
+.B{background:#087cff}
+.S{background:#00b938}
+.match{color:#00ee70;font-weight:bold}
+.muted{color:#9caed4;font-size:12px}
 .hidden{display:none!important}
-footer{text-align:center;color:#9eacd5;font-size:12px;padding:16px}
-@media(max-width:650px){
- body{padding:8px}
- .grid{grid-template-columns:1fr}
- h1{font-size:20px}
- .panel{padding:12px}
- canvas{height:190px}
-}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <header>
- <div>
-  <h1>👑 Number Analyzer</h1>
-  <div class="sub">Analyze • Detect Patterns • Learn</div>
- </div>
- <div class="version">🚀 VERSION 5.0</div>
+<h1>👑 Number Prediction Analyzer</h1>
+<p>Analyze • Detect Patterns • Smart Analytics</p>
+<b style="color:#ffe45a">VERSION 5.0 🚀</b>
 </header>
 
 <nav>
- <button class="active" onclick="showTab('dashboard',this)">⌂ Dashboard</button>
- <button onclick="showTab('trend',this)">📈 Trend</button>
- <button onclick="showTab('statistics',this)">▥ Statistics</button>
- <button onclick="showTab('history',this)">◷ History</button>
- <button onclick="showTab('settings',this)">⚙ Settings</button>
+<button class="active" onclick="tab('dashboard',this)">⌂ Dashboard</button>
+<button onclick="tab('trend',this)">📈 Trend</button>
+<button onclick="tab('statistics',this)">▥ Statistics</button>
+<button onclick="tab('patterns',this)">🔎 Patterns</button>
+<button onclick="tab('settings',this)">⚙ Settings</button>
 </nav>
 
-<main id="dashboard">
-
+<section id="dashboard">
 <div class="grid">
- <section class="panel">
-  <h2>⚡ Enter Numbers</h2>
-  <p class="sub">Enter numbers (comma separated)</p>
-  <input id="numberInput" value="7,2,9,4,8,1,6,3,9,0"
-   placeholder="Example: 7,2,9,4,8,1">
-  <button class="primary" onclick="analyze()">▥ Analyze Now →</button>
-  <p id="error" class="warn"></p>
- </section>
+<div class="panel">
+<h2>⚡ Enter Numbers</h2>
+<p class="muted">Enter digits without spaces or commas</p>
+<input id="input" placeholder="7294816309" inputmode="numeric">
+<button class="primary" onclick="analyze()">ANALYZE NOW →</button>
+<p id="error" style="color:#ff6666"></p>
+</div>
 
- <section class="panel">
-  <h2>📈 Big / Small Trend <span class="green" style="float:right">● Live Analysis</span></h2>
-  <div class="numbers" id="balls"></div>
-  <div class="bar">
-   <div class="bigbar" id="bigBar"></div>
-   <div class="smallbar" id="smallBar"></div>
-  </div>
-  <p id="ratio"></p>
- </section>
+<div class="panel">
+<h2>📈 Big / Small Trend</h2>
+<div class="numbers" id="balls"></div>
+<div class="bar">
+<div id="bigBar"></div>
+<div id="smallBar"></div>
+</div>
+<div id="ratio" class="muted"></div>
+</div>
 </div>
 
 <div class="grid">
- <section class="panel">
-  <h2>📊 Analysis Result</h2>
-  <div class="result">Total Numbers: <b id="total">0</b></div>
-  <div class="result">Unique Numbers: <b id="unique">0</b></div>
-  <div class="result">Most Frequent: <b id="most">-</b></div>
-  <div class="result">Least Frequent: <b id="least">-</b></div>
-  <h3>🥧 Frequency Chart</h3>
-  <div class="chart-bars" id="frequency"></div>
- </section>
-
- <section class="panel">
-  <h2>📈 Trend Analysis</h2>
-  <div class="mode">
-   <button class="active" onclick="setMode('BOTH',this)">BOTH</button>
-   <button onclick="setMode('UPTREND',this)">UPTREND</button>
-   <button onclick="setMode('DOWNTREND',this)">DOWNTREND</button>
-  </div>
-  <canvas id="graph"></canvas>
-  <p id="trendText" class="sub"></p>
- </section>
+<div class="panel">
+<h2>📊 Analysis Statistics</h2>
+<div class="statgrid">
+<div class="stat"><small>Total</small><strong id="total">0</strong></div>
+<div class="stat"><small>Unique</small><strong id="unique">0</strong></div>
+<div class="stat"><small>Big</small><strong id="big">0</strong></div>
+<div class="stat"><small>Small</small><strong id="small">0</strong></div>
+<div class="stat"><small>Odd</small><strong id="odd">0</strong></div>
+<div class="stat"><small>Even</small><strong id="even">0</strong></div>
+</div>
 </div>
 
-<div class="grid">
- <section class="panel">
-  <h2>🔎 Pattern Detection</h2>
-  <div id="patterns"></div>
- </section>
- <section class="panel">
-  <h2>🎯 Trend Summary</h2>
-  <div class="result">Recent direction: <strong id="direction">-</strong></div>
-  <div class="result">Big percentage: <strong id="bigPct">0%</strong></div>
-  <div class="result">Small percentage: <strong id="smallPct">0%</strong></div>
-  <div class="result">Historical balance: <strong id="balance">-</strong></div>
-  <p class="sub">These describe previous results, not future outcomes.</p>
- </section>
+<div class="panel">
+<h2>📈 Trend Analysis</h2>
+<canvas id="chart"></canvas>
+<div id="trendResult" class="muted"></div>
+</div>
 </div>
 
-<section class="panel">
- <h2>◷ Recent Trend History</h2>
- <div class="history" id="recent"></div>
+<div class="panel">
+<h2>🔎 Advanced Pattern Detection</h2>
+<div id="detected"></div>
+</div>
+
+<div class="panel">
+<h2>🎯 Analysis Summary</h2>
+<div id="summary">Enter numbers to begin analysis.</div>
+<p class="muted">Historical analysis only. No guaranteed future results.</p>
+</div>
 </section>
-</main>
 
 <section id="trend" class="hidden">
- <div class="panel">
-  <h2>📈 Complete Trend Analysis</h2>
-  <div class="mode">
-   <button class="active" onclick="setMode('BOTH',this)">BOTH</button>
-   <button onclick="setMode('UPTREND',this)">UPTREND</button>
-   <button onclick="setMode('DOWNTREND',this)">DOWNTREND</button>
-  </div>
-  <canvas id="graph2"></canvas>
-  <div id="trendDetails"></div>
- </div>
+<div class="panel">
+<h2>📈 Trend Analysis Graph</h2>
+<div class="numbers">
+<button onclick="setMode('BOTH',this)" class="active">BOTH</button>
+<button onclick="setMode('UPTREND',this)">UPTREND</button>
+<button onclick="setMode('DOWNTREND',this)">DOWNTREND</button>
+</div>
+<canvas id="chart2"></canvas>
+<div id="trendInfo"></div>
+</div>
 </section>
 
 <section id="statistics" class="hidden">
- <div class="panel">
-  <h2>📊 Number Statistics</h2>
-  <div class="stats" id="statCards"></div>
-  <h3 style="margin-top:20px">Frequency Details</h3>
-  <div id="frequencyDetails"></div>
- </div>
+<div class="panel">
+<h2>📊 Frequency Statistics</h2>
+<div id="frequency"></div>
+</div>
 </section>
 
-<section id="history" class="hidden">
- <div class="panel">
-  <h2>◷ Number History</h2>
-  <div id="allHistory"></div>
-  <button class="primary" onclick="clearHistory()">Clear History</button>
- </div>
+<section id="patterns" class="hidden">
+<div class="panel">
+<h2>🔎 Complete Pattern Library</h2>
+<div id="library"></div>
+</div>
 </section>
 
 <section id="settings" class="hidden">
- <div class="panel">
-  <h2>⚙ Settings</h2>
-  <h3>Big / Small Rule</h3>
-  <p class="sub">Small = 0–4 | Big = 5–9</p>
-  <h3>History Display</h3>
-  <input id="historyLimit" type="number" value="10" min="1" max="100">
-  <button class="primary" onclick="updateSettings()">Save Settings</button>
-  <button class="primary" onclick="resetApp()">Reset Application</button>
- </div>
+<div class="panel">
+<h2>⚙ Settings</h2>
+<p>Small = 0,1,2,3,4</p>
+<p>Big = 5,6,7,8,9</p>
+<p>Automatic spacing: ON</p>
+<p>Number History: OFF</p>
+<p>Recent Trend History: OFF</p>
+<button onclick="resetApp()" class="primary">RESET ANALYZER</button>
+</div>
 </section>
 
-<footer>
- ✨ Educational Number Analyzer V5.0<br>
- Historical analysis only • No guaranteed prediction
+<footer class="muted" style="text-align:center;padding:15px">
+Number Analyzer V5.0 • Educational Analysis Tool
 </footer>
 
 <script>
-let numbers=[];
-let history=[];
+let nums=[];
 let mode="BOTH";
-let historyLimit=10;
 
-function type(n){
- return n>=5?"Big":"Small";
+const patterns=[
+{name:"Single Trend",seq:"BSBSB"},
+{name:"Double Trend",seq:"SSBBSS"},
+{name:"Triple Trend",seq:"BBBSSS"},
+{name:"Quadra Trend",seq:"SSSSBBBB"},
+{name:"Three in One Trend",seq:"BBBSBBB"},
+{name:"Two in One Trend",seq:"SSBSSBSS"},
+{name:"Three in Two Trend",seq:"BBBSSBBB"},
+{name:"Four in One Trend",seq:"SSSSBSSS"},
+{name:"Four in Two Trend",seq:"BBB BSS BBBB".replaceAll(" ","")},
+{name:"Long Trend",seq:"SSSSSSSSSSS"},
+{name:"Ultra Long Trend",seq:"BBBBBBBBBB"}
+];
+
+const $=id=>document.getElementById(id);
+const type=n=>n>=5?"B":"S";
+
+function formatInput(){
+ let value=$("input").value.replace(/[^0-9]/g,"").slice(0,200);
+ $("input").value=value.split("").join(" ");
 }
 
-function showTab(id,btn){
- document.querySelectorAll("main,body > section").forEach(e=>{
-  if(["dashboard","trend","statistics","history","settings"].includes(e.id))
-   e.classList.add("hidden");
- });
- document.getElementById(id).classList.remove("hidden");
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+$("input").addEventListener("input",formatInput);
+
+function tab(id,btn){
+ document.querySelectorAll("#dashboard,#trend,#statistics,#patterns,#settings")
+ .forEach(x=>x.classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
  btn.classList.add("active");
- if(id==="trend") drawGraph("graph2");
+ if(id==="trend")draw("chart2");
 }
 
 function analyze(){
- const raw=document.getElementById("numberInput").value.trim();
- const values=raw.split(/[\s,]+/).filter(Boolean);
- const error=document.getElementById("error");
-
- if(!values.length || values.some(x=>!/^[0-9]$/.test(x))){
-  error.textContent="Enter only single digits from 0 to 9.";
-  return;
+ let raw=$("input").value.replace(/\D/g,"");
+ $("error").textContent="";
+ if(!raw.length){
+ $("error").textContent="Please enter numbers first.";
+ return;
  }
- error.textContent="";
- numbers=values.map(Number);
- history.push([...numbers]);
+ nums=[...raw].map(Number);
  render();
 }
 
-function render(){
- const total=numbers.length;
- const freq=Array(10).fill(0);
- numbers.forEach(n=>freq[n]++);
+function findPatterns(){
+ let sequence=nums.map(type).join("");
+ let matches=[];
 
- const big=numbers.filter(n=>n>=5).length;
- const small=total-big;
- const bp=total?big/total*100:0;
- const sp=100-bp;
-
- document.getElementById("total").textContent=total;
- document.getElementById("unique").textContent=new Set(numbers).size;
-
- let max=Math.max(...freq);
- let min=Math.min(...freq.filter(x=>x>0));
- document.getElementById("most").textContent=
-  max?freq.indexOf(max)+" ("+(max/total*100).toFixed(1)+"%)":"-";
- document.getElementById("least").textContent=
-  min?freq.indexOf(min)+" ("+(min/total*100).toFixed(1)+"%)":"-";
-
- document.getElementById("bigBar").style.width=bp+"%";
- document.getElementById("smallBar").style.width=sp+"%";
- document.getElementById("ratio").textContent=
-  "Big "+bp.toFixed(1)+"%  |  Small "+sp.toFixed(1)+"%";
-
- document.getElementById("bigPct").textContent=bp.toFixed(1)+"%";
- document.getElementById("smallPct").textContent=sp.toFixed(1)+"%";
- document.getElementById("balance").textContent=
-  Math.abs(bp-sp)<15?"Balanced":"Uneven";
-
- document.getElementById("balls").innerHTML=numbers.slice(-10).map(n=>
-  `<div class="number"><div class="ball ${type(n).toLowerCase()}">${n}</div>
-  <span>${type(n)}</span></div>`
- ).join("");
-
- document.getElementById("frequency").innerHTML=freq.map((f,n)=>
-  `<div class="chart-item">
-  <i style="height:${total?f/total*100:0}%;background:${n%2?'#20d75d':'#168cff'}"></i>
-  <small>${n}</small></div>`
- ).join("");
-
- let alternating=numbers.length>1&&numbers.every((n,i)=>
-  i===0||type(n)!==type(numbers[i-1]));
- let odd=numbers.filter(n=>n%2).length;
- let even=total-odd;
- let repeated=freq.some(x=>x>1);
- let gaps=numbers.slice(1).map((n,i)=>Math.abs(n-numbers[i]));
- let avgGap=gaps.length?gaps.reduce((a,b)=>a+b,0)/gaps.length:0;
-
- document.getElementById("patterns").innerHTML=`
- <p>🟢 Big/Small Pattern: <b class="good">${alternating?"Alternating":"Mixed / Repeating"}</b></p>
- <p>🟢 Odd/Even Balance: <b class="good">${odd}/${even}</b></p>
- <p>🟢 Repeating Numbers: <b>${repeated?"Yes":"No"}</b></p>
- <p>🟢 Average Number Gap: <b>${avgGap.toFixed(2)}</b></p>
- `;
-
- let recent=numbers.slice(-10);
- document.getElementById("recent").innerHTML=recent.map(n=>
-  `<span class="tag ${type(n)==="Big"?"blue":"green"}"
-  style="background:${type(n)==="Big"?"#0755c9":"#087a25"}">${type(n)}</span>`
- ).join("");
-
- let recentBig=recent.filter(n=>n>=5).length;
- let recentSmall=recent.length-recentBig;
- let direction=recentBig>recentSmall?"Big dominant":
-  recentSmall>recentBig?"Small dominant":"Balanced";
- document.getElementById("direction").textContent=direction;
-
- document.getElementById("trendText").textContent=
-  "Historical direction: "+direction;
-
- document.getElementById("statCards").innerHTML=`
- <div class="stat"><small>Total</small><strong>${total}</strong></div>
- <div class="stat"><small>Unique</small><strong>${new Set(numbers).size}</strong></div>
- <div class="stat"><small>Big</small><strong>${big}</strong></div>
- <div class="stat"><small>Small</small><strong>${small}</strong></div>
- <div class="stat"><small>Odd</small><strong>${odd}</strong></div>
- <div class="stat"><small>Even</small><strong>${even}</strong></div>`;
-
- document.getElementById("frequencyDetails").innerHTML=freq.map((f,n)=>
- `<div class="result">Number ${n}: <b>${f}</b> times
- (${total?(f/total*100).toFixed(1):0}%)</div>`
- ).join("");
-
- document.getElementById("trendDetails").innerHTML=
- `<p>Big: ${big} | Small: ${small}</p>
- <p>Recent dominant category: ${direction}</p>`;
-
- document.getElementById("allHistory").innerHTML=history.slice().reverse()
- .map((h,i)=>`<div class="result">Analysis ${history.length-i}: ${h.join(", ")}</div>`)
- .join("");
-
- drawGraph("graph");
- drawGraph("graph2");
-}
-
-function setMode(value,btn){
- mode=value;
- document.querySelectorAll(".mode button").forEach(b=>b.classList.remove("active"));
- document.querySelectorAll(".mode").forEach(group=>{
-  group.querySelectorAll("button").forEach(b=>{
-   if(b.textContent===value)b.classList.add("active");
-  });
+ patterns.forEach(p=>{
+ let found=[];
+ for(let i=0;i<=sequence.length-p.seq.length;i++){
+ if(sequence.slice(i,i+p.seq.length)===p.seq)
+ found.push(i+1);
+ }
+ if(found.length)matches.push({...p,count:found.length,positions:found});
  });
- drawGraph("graph");
- drawGraph("graph2");
+ return matches;
 }
 
-function drawGraph(id){
- const canvas=document.getElementById(id);
- if(!canvas)return;
- const rect=canvas.getBoundingClientRect();
- const w=canvas.width=rect.width*devicePixelRatio;
- const h=canvas.height=rect.height*devicePixelRatio;
- const ctx=canvas.getContext("2d");
+function render(){
+ let total=nums.length;
+ let big=nums.filter(n=>n>=5).length;
+ let small=total-big;
+ let bp=big/total*100;
+ let sp=small/total*100;
+
+ $("total").textContent=total;
+ $("unique").textContent=new Set(nums).size;
+ $("big").textContent=big;
+ $("small").textContent=small;
+ $("odd").textContent=nums.filter(n=>n%2).length;
+ $("even").textContent=nums.filter(n=>n%2===0).length;
+
+ $("balls").innerHTML=nums.slice(-30).map(n=>
+ `<div><div class="ball ${type(n)}">${n}</div>
+ <span>${type(n)}</span></div>`).join("");
+
+ $("bigBar").style.width=bp+"%";
+ $("smallBar").style.width=sp+"%";
+ $("ratio").textContent=`BIG ${bp.toFixed(1)}% | SMALL ${sp.toFixed(1)}%`;
+
+ let matches=findPatterns();
+
+ $("detected").innerHTML=matches.length?
+ matches.map(p=>`<div class="pattern">
+ <b class="match">✓ ${p.name}</b>
+ <div class="muted">Matches: ${p.count} | Starting positions: ${p.positions.join(", ")}</div>
+ <div class="pattern-row">${p.seq.split("").map(x=>
+ `<span class="dot ${x}">${x}</span>`).join("")}</div>
+ </div>`).join("")
+ :'<p class="muted">No exact listed pattern found in the entered sequence.</p>';
+
+ $("summary").innerHTML=`
+ <p>Big: ${big} (${bp.toFixed(1)}%)</p>
+ <p>Small: ${small} (${sp.toFixed(1)}%)</p>
+ <p>Historical distribution: ${Math.abs(bp-sp)<15?"Balanced":"Uneven"}</p>
+ <p>Exact pattern matches: ${matches.length}</p>`;
+
+ $("trendResult").textContent=
+ `Big ${big} | Small ${small} | ${bp.toFixed(1)}% / ${sp.toFixed(1)}%`;
+
+ $("frequency").innerHTML=Array.from({length:10},(_,n)=>{
+ let count=nums.filter(x=>x===n).length;
+ return `<div class="pattern">Number ${n}: <b>${count}</b>
+ <span class="muted">(${(count/total*100).toFixed(1)}%)</span>
+ <div class="bar"><div style="width:${count/total*100}%;background:#168cff"></div></div>
+ </div>`;
+ }).join("");
+
+ $("library").innerHTML=patterns.map(p=>
+ `<div class="pattern"><b>${p.name}</b>
+ <div class="pattern-row">${p.seq.split("").map(x=>
+ `<span class="dot ${x}">${x}</span>`).join("")}</div>
+ </div>`).join("");
+
+ $("trendInfo").textContent=
+ `Historical Big/Small distribution: ${bp.toFixed(1)}% / ${sp.toFixed(1)}%`;
+
+ draw("chart");
+ draw("chart2");
+}
+
+function setMode(m,btn){
+ mode=m;
+ document.querySelectorAll("#trend button").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+ draw("chart2");
+}
+
+function draw(id){
+ let c=$(id),ctx=c.getContext("2d");
+ let w=c.clientWidth,h=c.clientHeight;
+ c.width=w*devicePixelRatio;
+ c.height=h*devicePixelRatio;
  ctx.scale(devicePixelRatio,devicePixelRatio);
- const W=rect.width,H=rect.height;
- ctx.clearRect(0,0,W,H);
+ ctx.clearRect(0,0,w,h);
+ if(!nums.length)return;
 
- const pad=32;
- const points=numbers.slice(-20);
- if(!points.length)return;
-
+ let data=nums.slice(-30);
+ let pad=25;
+ ctx.strokeStyle="#263d70";
+ ctx.fillStyle="#aab9dd";
  ctx.font="11px Arial";
- ctx.strokeStyle="#263966";
- ctx.fillStyle="#a9b9e7";
+
  for(let i=0;i<=4;i++){
-  let y=pad+(H-pad*1.5)*i/4;
-  ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-8,y);
-  ctx.stroke();
-  ctx.fillText((100-i*25)+"%",2,y+4);
+ let y=pad+(h-2*pad)*i/4;
+ ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w-5,y);ctx.stroke();
+ ctx.fillText((100-i*25)+"%",0,y-3);
  }
 
- function line(data,color){
-  if(mode!=="BOTH" && (mode==="UPTREND"&&color!=="#00eaff" ||
-    mode==="DOWNTREND"&&color!=="#00ef58"))return;
-  ctx.beginPath();
-  data.forEach((v,i)=>{
-   let x=pad+i*(W-pad-12)/Math.max(1,data.length-1);
-   let y=pad+(H-pad*1.5)*(1-v/100);
-   if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-  });
-  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke();
-  data.forEach((v,i)=>{
-   let x=pad+i*(W-pad-12)/Math.max(1,data.length-1);
-   let y=pad+(H-pad*1.5)*(1-v/100);
-   ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);
-   ctx.fillStyle=color;ctx.fill();
-  });
+ function line(values,color){
+ ctx.beginPath();
+ values.forEach((v,i)=>{
+ let x=pad+i*(w-pad-10)/Math.max(1,values.length-1);
+ let y=pad+(h-2*pad)*(1-v/100);
+ if(!i)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+ });
+ ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke();
  }
- let big=points.map(n=>n>=5?100:0);
- let small=points.map(n=>n<5?100:0);
- line(big,"#00eaff");
- line(small,"#00ef58");
+
+ let big=data.map(n=>n>=5?100:0);
+ let small=data.map(n=>n<5?100:0);
+
+ if(mode!=="DOWNTREND")line(big,"#00baff");
+ if(mode!=="UPTREND")line(small,"#00ef58");
 }
-function clearHistory(){
- history=[];
- document.getElementById("allHistory").innerHTML="History cleared.";
-}
-function updateSettings(){
- historyLimit=Math.max(1,Math.min(100,
-  Number(document.getElementById("historyLimit").value)||10));
- alert("Settings saved!");
-}
+
 function resetApp(){
- if(confirm("Reset all application data?")){
-  numbers=[];history=[];
-  document.getElementById("numberInput").value="";
-  render();
- }
+ nums=[];
+ $("input").value="";
+ $("detected").textContent="";
+ $("summary").textContent="Enter numbers to begin analysis.";
+ ["total","unique","big","small","odd","even"].forEach(id=>$(id).textContent="0");
+ $("balls").innerHTML="";
+ $("frequency").innerHTML="";
+ $("ratio").textContent="";
+ draw("chart");
+ draw("chart2");
 }
-
-analyze();
 </script>
 </body>
-                       </html>
-  
+ </html>
+ 
